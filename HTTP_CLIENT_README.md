@@ -224,11 +224,11 @@ client.Navigate(pageID, "https://example.com/items")
 
 // 获取所有项目标题
 resp, _ := client.ElementAllTexts(pageID, ".item-title")
-titles := resp.Data["texts"].([]interface{})
+titles := resp.Data["texts"].([]any)
 
 // 获取所有项目链接
 resp, _ = client.ElementAllAttributes(pageID, ".item-title", "href")
-links := resp.Data["attributes"].([]interface{})
+links := resp.Data["attributes"].([]any)
 
 // 处理数据
 for i, title := range titles {
@@ -274,7 +274,7 @@ for i, title := range titles {
 - `WaitForLoadStateLoad(pageID string)` - 等待页面加载
 - `WaitForDomContentLoaded(pageID string)` - 等待 DOM 加载
 - `WaitForSelectorVisible(pageID, selector string)` - 等待元素可见
-- `RandomWait(pageID string, duration interface{})` - 随机等待
+- `RandomWait(pageID string, duration any)` - 随机等待
 
 ### 高级功能
 

@@ -18,9 +18,9 @@ type HTTPClient struct {
 
 // HTTPResponse HTTP 响应
 type HTTPResponse struct {
-	Success bool                   `json:"success"`
-	Data    map[string]interface{} `json:"data,omitempty"`
-	Error   string                 `json:"error,omitempty"`
+	Success bool           `json:"success"`
+	Data    map[string]any `json:"data,omitempty"`
+	Error   string         `json:"error,omitempty"`
 }
 
 // NewHTTPClient 创建新的 HTTP 客户端
@@ -39,7 +39,7 @@ func NewHTTPClient(baseURL, sessionID string) *HTTPClient {
 }
 
 // doRequest 执行 HTTP 请求
-func (hc *HTTPClient) doRequest(method, endpoint string, body interface{}) (*HTTPResponse, error) {
+func (hc *HTTPClient) doRequest(method, endpoint string, body any) (*HTTPResponse, error) {
 	var reqBody io.Reader
 	if body != nil {
 		jsonBody, err := json.Marshal(body)
@@ -85,7 +85,7 @@ func (hc *HTTPClient) doRequest(method, endpoint string, body interface{}) (*HTT
 }
 
 // doRequestBinary 执行 HTTP 请求并返回原始数据
-func (hc *HTTPClient) doRequestBinary(method, endpoint string, body interface{}) ([]byte, error) {
+func (hc *HTTPClient) doRequestBinary(method, endpoint string, body any) ([]byte, error) {
 	var reqBody io.Reader
 	if body != nil {
 		jsonBody, err := json.Marshal(body)
@@ -123,9 +123,11 @@ func (hc *HTTPClient) doRequestBinary(method, endpoint string, body interface{})
 
 // StartBrowser 启动浏览器
 func (hc *HTTPClient) StartBrowser(headless bool) (*HTTPResponse, error) {
-	body := map[string]interface{}{
+	body := map[string]any{
 		"sessionId": hc.sessionID,
-		"headless":  headless,
+	}
+	if headless {
+		body["headless"] = "new"
 	}
 
 	return hc.doRequest("POST", "/api/browser/start", body)
@@ -133,7 +135,7 @@ func (hc *HTTPClient) StartBrowser(headless bool) (*HTTPResponse, error) {
 
 // ConnectBrowser 连接到现有浏览器
 func (hc *HTTPClient) ConnectBrowser(port int) (*HTTPResponse, error) {
-	body := map[string]interface{}{
+	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"port":      port,
 	}
@@ -143,7 +145,7 @@ func (hc *HTTPClient) ConnectBrowser(port int) (*HTTPResponse, error) {
 
 // StopBrowser 停止浏览器
 func (hc *HTTPClient) StopBrowser() (*HTTPResponse, error) {
-	body := map[string]interface{}{
+	body := map[string]any{
 		"sessionId": hc.sessionID,
 	}
 
@@ -152,7 +154,7 @@ func (hc *HTTPClient) StopBrowser() (*HTTPResponse, error) {
 
 // NewPage 创建新页面
 func (hc *HTTPClient) NewPage(pageID string) (*HTTPResponse, error) {
-	body := map[string]interface{}{
+	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 	}
@@ -162,7 +164,7 @@ func (hc *HTTPClient) NewPage(pageID string) (*HTTPResponse, error) {
 
 // ClosePage 关闭页面
 func (hc *HTTPClient) ClosePage(pageID string) (*HTTPResponse, error) {
-	body := map[string]interface{}{
+	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 	}
@@ -172,7 +174,7 @@ func (hc *HTTPClient) ClosePage(pageID string) (*HTTPResponse, error) {
 
 // Navigate 导航到 URL
 func (hc *HTTPClient) Navigate(pageID, url string) (*HTTPResponse, error) {
-	body := map[string]interface{}{
+	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 		"url":       url,
@@ -183,7 +185,7 @@ func (hc *HTTPClient) Navigate(pageID, url string) (*HTTPResponse, error) {
 
 // NavigateWithLoadedState 导航并等待加载完成
 func (hc *HTTPClient) NavigateWithLoadedState(pageID, url string) (*HTTPResponse, error) {
-	body := map[string]interface{}{
+	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 		"url":       url,
@@ -194,7 +196,7 @@ func (hc *HTTPClient) NavigateWithLoadedState(pageID, url string) (*HTTPResponse
 
 // Reload 刷新页面
 func (hc *HTTPClient) Reload(pageID string) (*HTTPResponse, error) {
-	body := map[string]interface{}{
+	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 	}
@@ -204,7 +206,7 @@ func (hc *HTTPClient) Reload(pageID string) (*HTTPResponse, error) {
 
 // ReloadWithLoadedState 刷新并等待加载完成
 func (hc *HTTPClient) ReloadWithLoadedState(pageID string) (*HTTPResponse, error) {
-	body := map[string]interface{}{
+	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 	}
@@ -214,7 +216,7 @@ func (hc *HTTPClient) ReloadWithLoadedState(pageID string) (*HTTPResponse, error
 
 // ExecuteScript 执行 JavaScript
 func (hc *HTTPClient) ExecuteScript(pageID, script string) (*HTTPResponse, error) {
-	body := map[string]interface{}{
+	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 		"script":    script,
@@ -255,7 +257,7 @@ func (hc *HTTPClient) GetHTML(pageID string) (*HTTPResponse, error) {
 
 // Screenshot 截图
 func (hc *HTTPClient) Screenshot(pageID, format string) ([]byte, error) {
-	body := map[string]interface{}{
+	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 		"format":    format,
@@ -265,8 +267,8 @@ func (hc *HTTPClient) Screenshot(pageID, format string) ([]byte, error) {
 }
 
 // RandomWait 随机等待
-func (hc *HTTPClient) RandomWait(pageID string, duration interface{}) (*HTTPResponse, error) {
-	body := map[string]interface{}{
+func (hc *HTTPClient) RandomWait(pageID string, duration any) (*HTTPResponse, error) {
+	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 		"duration":  duration,
@@ -277,7 +279,7 @@ func (hc *HTTPClient) RandomWait(pageID string, duration interface{}) (*HTTPResp
 
 // WaitForLoadStateLoad 等待页面加载完成
 func (hc *HTTPClient) WaitForLoadStateLoad(pageID string) (*HTTPResponse, error) {
-	body := map[string]interface{}{
+	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 	}
@@ -287,7 +289,7 @@ func (hc *HTTPClient) WaitForLoadStateLoad(pageID string) (*HTTPResponse, error)
 
 // WaitForDomContentLoaded 等待 DOM 加载完成
 func (hc *HTTPClient) WaitForDomContentLoaded(pageID string) (*HTTPResponse, error) {
-	body := map[string]interface{}{
+	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 	}
@@ -297,7 +299,7 @@ func (hc *HTTPClient) WaitForDomContentLoaded(pageID string) (*HTTPResponse, err
 
 // WaitForSelectorVisible 等待选择器可见
 func (hc *HTTPClient) WaitForSelectorVisible(pageID, selector string) (*HTTPResponse, error) {
-	body := map[string]interface{}{
+	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 		"selector":  selector,
@@ -308,7 +310,7 @@ func (hc *HTTPClient) WaitForSelectorVisible(pageID, selector string) (*HTTPResp
 
 // ExpectResponseText 等待响应文本
 func (hc *HTTPClient) ExpectResponseText(pageID, urlOrPredicate, callback string) (*HTTPResponse, error) {
-	body := map[string]interface{}{
+	body := map[string]any{
 		"sessionId":      hc.sessionID,
 		"pageId":         pageID,
 		"urlOrPredicate": urlOrPredicate,
@@ -320,7 +322,7 @@ func (hc *HTTPClient) ExpectResponseText(pageID, urlOrPredicate, callback string
 
 // MustInnerText 必须获取内部文本
 func (hc *HTTPClient) MustInnerText(pageID, selector string) (*HTTPResponse, error) {
-	body := map[string]interface{}{
+	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 		"selector":  selector,
@@ -331,7 +333,7 @@ func (hc *HTTPClient) MustInnerText(pageID, selector string) (*HTTPResponse, err
 
 // MustTextContent 必须获取文本内容
 func (hc *HTTPClient) MustTextContent(pageID, selector string) (*HTTPResponse, error) {
-	body := map[string]interface{}{
+	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 		"selector":  selector,
@@ -342,7 +344,7 @@ func (hc *HTTPClient) MustTextContent(pageID, selector string) (*HTTPResponse, e
 
 // Suspend 暂停页面
 func (hc *HTTPClient) Suspend(pageID string) (*HTTPResponse, error) {
-	body := map[string]interface{}{
+	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 	}
@@ -352,7 +354,7 @@ func (hc *HTTPClient) Suspend(pageID string) (*HTTPResponse, error) {
 
 // Continue 继续页面
 func (hc *HTTPClient) Continue(pageID string) (*HTTPResponse, error) {
-	body := map[string]interface{}{
+	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 	}
@@ -362,7 +364,7 @@ func (hc *HTTPClient) Continue(pageID string) (*HTTPResponse, error) {
 
 // Release 释放页面锁
 func (hc *HTTPClient) Release(pageID string) (*HTTPResponse, error) {
-	body := map[string]interface{}{
+	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 	}
@@ -372,7 +374,7 @@ func (hc *HTTPClient) Release(pageID string) (*HTTPResponse, error) {
 
 // CloseAll 关闭所有页面
 func (hc *HTTPClient) CloseAll(pageID string) (*HTTPResponse, error) {
-	body := map[string]interface{}{
+	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 	}
@@ -382,7 +384,7 @@ func (hc *HTTPClient) CloseAll(pageID string) (*HTTPResponse, error) {
 
 // ExpectExtPage 等待新页面
 func (hc *HTTPClient) ExpectExtPage(pageID, callback string) (*HTTPResponse, error) {
-	body := map[string]interface{}{
+	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 		"callback":  callback,
@@ -393,7 +395,7 @@ func (hc *HTTPClient) ExpectExtPage(pageID, callback string) (*HTTPResponse, err
 
 // ElementExists 检查元素是否存在
 func (hc *HTTPClient) ElementExists(pageID, selector string) (*HTTPResponse, error) {
-	body := map[string]interface{}{
+	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 		"selector":  selector,
@@ -404,7 +406,7 @@ func (hc *HTTPClient) ElementExists(pageID, selector string) (*HTTPResponse, err
 
 // ElementText 获取元素文本
 func (hc *HTTPClient) ElementText(pageID, selector string) (*HTTPResponse, error) {
-	body := map[string]interface{}{
+	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 		"selector":  selector,
@@ -415,7 +417,7 @@ func (hc *HTTPClient) ElementText(pageID, selector string) (*HTTPResponse, error
 
 // ElementClick 点击元素
 func (hc *HTTPClient) ElementClick(pageID, selector string) (*HTTPResponse, error) {
-	body := map[string]interface{}{
+	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 		"selector":  selector,
@@ -426,7 +428,7 @@ func (hc *HTTPClient) ElementClick(pageID, selector string) (*HTTPResponse, erro
 
 // ElementSetValue 设置元素值
 func (hc *HTTPClient) ElementSetValue(pageID, selector, value string) (*HTTPResponse, error) {
-	body := map[string]interface{}{
+	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 		"selector":  selector,
@@ -438,7 +440,7 @@ func (hc *HTTPClient) ElementSetValue(pageID, selector, value string) (*HTTPResp
 
 // ElementWait 等待元素
 func (hc *HTTPClient) ElementWait(pageID, selector string, timeout int) (*HTTPResponse, error) {
-	body := map[string]interface{}{
+	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 		"selector":  selector,
@@ -450,7 +452,7 @@ func (hc *HTTPClient) ElementWait(pageID, selector string, timeout int) (*HTTPRe
 
 // ElementAttribute 获取元素属性
 func (hc *HTTPClient) ElementAttribute(pageID, selector, attribute string) (*HTTPResponse, error) {
-	body := map[string]interface{}{
+	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 		"selector":  selector,
@@ -462,7 +464,7 @@ func (hc *HTTPClient) ElementAttribute(pageID, selector, attribute string) (*HTT
 
 // ElementAllTexts 获取所有匹配元素的文本
 func (hc *HTTPClient) ElementAllTexts(pageID, selector string) (*HTTPResponse, error) {
-	body := map[string]interface{}{
+	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 		"selector":  selector,
@@ -473,7 +475,7 @@ func (hc *HTTPClient) ElementAllTexts(pageID, selector string) (*HTTPResponse, e
 
 // ElementAllAttributes 获取所有匹配元素的属性
 func (hc *HTTPClient) ElementAllAttributes(pageID, selector, attribute string) (*HTTPResponse, error) {
-	body := map[string]interface{}{
+	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 		"selector":  selector,
@@ -485,7 +487,7 @@ func (hc *HTTPClient) ElementAllAttributes(pageID, selector, attribute string) (
 
 // ElementCount 获取元素数量
 func (hc *HTTPClient) ElementCount(pageID, selector string) (*HTTPResponse, error) {
-	body := map[string]interface{}{
+	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 		"selector":  selector,

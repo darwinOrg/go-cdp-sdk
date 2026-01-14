@@ -97,7 +97,7 @@ func main() {
 	resp, err = client.ElementAllTexts(pageID, ".result h3 a")
 	if err != nil {
 		log.Printf("❌ 获取标题失败: %v\n", err)
-	} else if texts, ok := resp.Data["texts"].([]interface{}); ok {
+	} else if texts, ok := resp.Data["texts"].([]any); ok {
 		fmt.Printf("✅ 找到 %d 个结果:\n", len(texts))
 		for i, text := range texts {
 			if i < 5 { // 只显示前5个
