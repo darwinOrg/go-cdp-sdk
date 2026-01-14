@@ -674,3 +674,15 @@ func (wsc *WebSocketClient) ElementCount(pageID, selector string) (*Response, er
 
 	return wsc.sendRequest(context.Background(), req)
 }
+
+// ConnectBrowser 连接到现有浏览器
+func (wsc *WebSocketClient) ConnectBrowser(port int) (*Response, error) {
+	req := &Request{
+		Type: "connect_browser",
+		Data: map[string]interface{}{
+			"port": port,
+		},
+	}
+
+	return wsc.sendRequest(context.Background(), req)
+}
