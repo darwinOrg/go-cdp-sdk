@@ -14,7 +14,7 @@ import (
 
 func main() {
 	// 创建 WebSocket 客户端
-	client := cdp.NewWebSocketClient("ws://localhost:3001", "")
+	client := cdpsdk.NewWebSocketClient("ws://localhost:3001", "")
 
 	// 连接到服务器
 	fmt.Println("📌 连接到 WebSocket 服务器...")
@@ -25,11 +25,11 @@ func main() {
 	fmt.Println("✅ 连接成功")
 
 	// 注册事件处理器
-	client.RegisterEventHandler("load", func(event *cdp.Response) {
+	client.RegisterEventHandler("load", func(event *cdpsdk.Response) {
 		fmt.Printf("📄 页面加载事件: %s\n", event.PageID)
 	})
 
-	client.RegisterEventHandler("console", func(event *cdp.Response) {
+	client.RegisterEventHandler("console", func(event *cdpsdk.Response) {
 		fmt.Printf("🖥️  控制台事件: %v\n", event.EventData)
 	})
 

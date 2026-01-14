@@ -1,4 +1,4 @@
-package cdp
+package cdpsdk
 
 import (
 	"context"
@@ -89,7 +89,7 @@ func (wsc *WebSocketClient) Connect(ctx context.Context) error {
 // Close 关闭连接
 func (wsc *WebSocketClient) Close() error {
 	close(wsc.done)
-	
+
 	wsc.mu.Lock()
 	defer wsc.mu.Unlock()
 

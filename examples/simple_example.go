@@ -10,7 +10,7 @@ import (
 
 func main() {
 	// 创建 WebSocket 客户端
-	client := cdp.NewWebSocketClient("ws://localhost:3001", "")
+	client := cdpsdk.NewWebSocketClient("ws://localhost:3001", "")
 
 	// 连接到服务器
 	fmt.Println("📌 连接到 WebSocket 服务器...")
