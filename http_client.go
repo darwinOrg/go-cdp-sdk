@@ -519,6 +519,18 @@ func (hc *HTTPClient) ElementClick(pageID, selector string) error {
 	return err
 }
 
+// ElementHover 鼠标悬停
+func (hc *HTTPClient) ElementHover(pageID, selector string) error {
+	body := map[string]any{
+		"sessionId": hc.sessionID,
+		"pageId":    pageID,
+		"selector":  selector,
+	}
+
+	_, err := hc.doRequest("POST", "/api/element/hover", body)
+	return err
+}
+
 // ElementSetValue 设置元素值
 func (hc *HTTPClient) ElementSetValue(pageID, selector, value string) error {
 	body := map[string]any{

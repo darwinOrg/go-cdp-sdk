@@ -58,6 +58,11 @@ func (l *Locator) Click() error {
 	return l.client.ElementClick(l.pageID, l.selector)
 }
 
+// Hover 鼠标悬停
+func (l *Locator) Hover() error {
+	return l.client.ElementHover(l.pageID, l.selector)
+}
+
 // SetValue 设置元素值
 func (l *Locator) SetValue(value string) error {
 	return l.client.ElementSetValue(l.pageID, l.selector, value)
