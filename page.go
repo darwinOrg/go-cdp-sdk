@@ -69,13 +69,8 @@ func (p *Page) GetHTML() (string, error) {
 
 // ========== 脚本执行 ==========
 
-// ExecuteScript 执行 JavaScript
+// ExecuteScript 执行 JavaScript 并返回结果
 func (p *Page) ExecuteScript(script string) (any, error) {
-	return p.client.ExecuteScript(p.pageID, script)
-}
-
-// Evaluate 执行 JavaScript 并返回结果
-func (p *Page) Evaluate(script string) (any, error) {
 	return p.client.ExecuteScript(p.pageID, script)
 }
 

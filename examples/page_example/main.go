@@ -61,7 +61,7 @@ func main() {
 
 	// 5. 多级 Locator + 链式操作
 	fmt.Println("\n5️⃣ 多级 Locator + 链式操作...")
-	linkLocator := page.Locator("div").ExtLocator("p").ExtLocator("a")
+	linkLocator := page.Locator("div").Locator("p").Locator("a")
 	exists, err := linkLocator.Exists()
 	if err != nil {
 		log.Printf("❌ 检查存在失败: %v\n", err)

@@ -22,8 +22,8 @@ func (hc *HTTPClient) Locator(pageID, selector string) *Locator {
 	}
 }
 
-// ExtLocator 嵌套定位器，支持多级定位
-func (l *Locator) ExtLocator(selector string) *Locator {
+// Locator 嵌套定位器，支持多级定位
+func (l *Locator) Locator(selector string) *Locator {
 	newSelector := fmt.Sprintf("%s %s", l.selector, selector)
 	return &Locator{
 		client:    l.client,

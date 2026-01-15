@@ -43,7 +43,7 @@ func main() {
 	// 2. 二级 Locator
 	fmt.Println("\n2️⃣ 二级 Locator:")
 	bodyLocator := client.Locator(pageID, "body")
-	pLocator := bodyLocator.ExtLocator("p")
+	pLocator := bodyLocator.Locator("p")
 	fmt.Printf("   选择器链: %v\n", pLocator.GetSelectors())
 	fmt.Printf("   最终选择器: %s\n", pLocator.GetSelector())
 	pText, err := pLocator.Text()
@@ -56,8 +56,8 @@ func main() {
 	// 3. 三级 Locator
 	fmt.Println("\n3️⃣ 三级 Locator:")
 	divLocator := client.Locator(pageID, "div")
-	pLocator2 := divLocator.ExtLocator("p")
-	aLocator := pLocator2.ExtLocator("a")
+	pLocator2 := divLocator.Locator("p")
+	aLocator := pLocator2.Locator("a")
 	fmt.Printf("   选择器链: %v\n", aLocator.GetSelectors())
 	fmt.Printf("   最终选择器: %s\n", aLocator.GetSelector())
 	exists, err := aLocator.Exists()
@@ -69,7 +69,7 @@ func main() {
 
 	// 4. 使用链式调用点击元素
 	fmt.Println("\n4️⃣ 链式调用 + 点击:")
-	linkLocator := client.Locator(pageID, "div").ExtLocator("p").ExtLocator("a")
+	linkLocator := client.Locator(pageID, "div").Locator("p").Locator("a")
 	exists, err = linkLocator.Exists()
 	if err != nil {
 		log.Printf("❌ 检查存在失败: %v\n", err)
