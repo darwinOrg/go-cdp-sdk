@@ -96,26 +96,6 @@ func (p *Page) Wait(selector string) error {
 	return p.client.ElementWait(p.pageID, selector, 10000)
 }
 
-// RandomWait 随机等待
-func (p *Page) RandomWait(duration any) error {
-	return p.client.RandomWait(p.pageID, duration)
-}
-
-// RandomWaitShort 随机等待短时间
-func (p *Page) RandomWaitShort() error {
-	return p.RandomWait("short")
-}
-
-// RandomWaitMiddle 随机等待中等时间
-func (p *Page) RandomWaitMiddle() error {
-	return p.RandomWait("middle")
-}
-
-// RandomWaitLong 随机等待长时间
-func (p *Page) RandomWaitLong() error {
-	return p.RandomWait("long")
-}
-
 // ========== 高级功能 ==========
 
 // ExpectResponseText 等待响应文本

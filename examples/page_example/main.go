@@ -78,16 +78,8 @@ func main() {
 		fmt.Printf("✅ p 文本: %s\n", pText)
 	}
 
-	// 7. 随机等待
-	fmt.Println("\n7️⃣ 随机等待...")
-	if err := page.RandomWaitShort(); err != nil {
-		log.Printf("❌ 随机等待失败: %v\n", err)
-	} else {
-		fmt.Println("✅ 等待完成")
-	}
-
-	// 8. 链式操作
-	fmt.Println("\n8️⃣ 链式操作...")
+	// 7. 链式操作
+	fmt.Println("\n7️⃣ 链式操作...")
 	if err := page.NavigateThen("https://www.baidu.com", func(p *cdpsdk.Page) error {
 		p.LogInfo("导航到百度完成")
 		return p.WaitForLoadStateLoad()

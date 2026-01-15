@@ -296,18 +296,6 @@ func (hc *HTTPClient) Screenshot(pageID, format string) ([]byte, error) {
 	return hc.doRequestBinary("POST", "/api/page/screenshot", body)
 }
 
-// RandomWait 随机等待
-func (hc *HTTPClient) RandomWait(pageID string, duration any) error {
-	body := map[string]any{
-		"sessionId": hc.sessionID,
-		"pageId":    pageID,
-		"duration":  duration,
-	}
-
-	_, err := hc.doRequest("POST", "/api/page/random-wait", body)
-	return err
-}
-
 // WaitForLoadStateLoad 等待页面加载完成
 func (hc *HTTPClient) WaitForLoadStateLoad(pageID string) error {
 	body := map[string]any{

@@ -63,16 +63,8 @@ func main() {
 		fmt.Println("✅ 输入成功")
 	}
 
-	// 随机等待（模拟人类行为）
-	fmt.Println("\n📌 步骤 7: 随机等待...")
-	if err := client.RandomWait(pageID, "middle"); err != nil {
-		log.Printf("❌ 随机等待失败: %v\n", err)
-	} else {
-		fmt.Println("✅ 等待完成")
-	}
-
 	// 点击搜索按钮
-	fmt.Println("\n📌 步骤 8: 点击搜索按钮...")
+	fmt.Println("\n📌 步骤 7: 点击搜索按钮...")
 	if err := client.ElementClick(pageID, "#su"); err != nil {
 		log.Printf("❌ 点击失败: %v\n", err)
 	} else {
