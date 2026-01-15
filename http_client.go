@@ -122,7 +122,7 @@ func (hc *HTTPClient) doRequestBinary(method, endpoint string, body any) ([]byte
 }
 
 // StartBrowser 启动浏览器
-func (hc *HTTPClient) StartBrowser(headless bool) (*HTTPResponse, error) {
+func (hc *HTTPClient) StartBrowser(headless bool) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
 	}
@@ -130,129 +130,170 @@ func (hc *HTTPClient) StartBrowser(headless bool) (*HTTPResponse, error) {
 		body["headless"] = "new"
 	}
 
-	return hc.doRequest("POST", "/api/browser/start", body)
+	_, err := hc.doRequest("POST", "/api/browser/start", body)
+	return err
 }
 
 // ConnectBrowser 连接到现有浏览器
-func (hc *HTTPClient) ConnectBrowser(port int) (*HTTPResponse, error) {
+func (hc *HTTPClient) ConnectBrowser(port int) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"port":      port,
 	}
 
-	return hc.doRequest("POST", "/api/browser/connect", body)
+	_, err := hc.doRequest("POST", "/api/browser/connect", body)
+	return err
 }
 
 // StopBrowser 停止浏览器
-func (hc *HTTPClient) StopBrowser() (*HTTPResponse, error) {
+func (hc *HTTPClient) StopBrowser() error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
 	}
 
-	return hc.doRequest("POST", "/api/browser/stop", body)
+	_, err := hc.doRequest("POST", "/api/browser/stop", body)
+	return err
 }
 
 // NewPage 创建新页面
-func (hc *HTTPClient) NewPage(pageID string) (*HTTPResponse, error) {
+func (hc *HTTPClient) NewPage(pageID string) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 	}
 
-	return hc.doRequest("POST", "/api/page/new", body)
+	_, err := hc.doRequest("POST", "/api/page/new", body)
+	return err
 }
 
 // ClosePage 关闭页面
-func (hc *HTTPClient) ClosePage(pageID string) (*HTTPResponse, error) {
+func (hc *HTTPClient) ClosePage(pageID string) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 	}
 
-	return hc.doRequest("POST", "/api/page/close", body)
+	_, err := hc.doRequest("POST", "/api/page/close", body)
+	return err
 }
 
 // Navigate 导航到 URL
-func (hc *HTTPClient) Navigate(pageID, url string) (*HTTPResponse, error) {
+func (hc *HTTPClient) Navigate(pageID, url string) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 		"url":       url,
 	}
 
-	return hc.doRequest("POST", "/api/page/navigate", body)
+	_, err := hc.doRequest("POST", "/api/page/navigate", body)
+	return err
 }
 
 // NavigateWithLoadedState 导航并等待加载完成
-func (hc *HTTPClient) NavigateWithLoadedState(pageID, url string) (*HTTPResponse, error) {
+func (hc *HTTPClient) NavigateWithLoadedState(pageID, url string) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 		"url":       url,
 	}
 
-	return hc.doRequest("POST", "/api/page/navigate-with-loaded-state", body)
+	_, err := hc.doRequest("POST", "/api/page/navigate-with-loaded-state", body)
+	return err
 }
 
 // Reload 刷新页面
-func (hc *HTTPClient) Reload(pageID string) (*HTTPResponse, error) {
+func (hc *HTTPClient) Reload(pageID string) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 	}
 
-	return hc.doRequest("POST", "/api/page/reload", body)
+	_, err := hc.doRequest("POST", "/api/page/reload", body)
+	return err
 }
 
 // ReloadWithLoadedState 刷新并等待加载完成
-func (hc *HTTPClient) ReloadWithLoadedState(pageID string) (*HTTPResponse, error) {
+func (hc *HTTPClient) ReloadWithLoadedState(pageID string) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 	}
 
-	return hc.doRequest("POST", "/api/page/reload-with-loaded-state", body)
+	_, err := hc.doRequest("POST", "/api/page/reload-with-loaded-state", body)
+	return err
 }
 
 // ExecuteScript 执行 JavaScript
-func (hc *HTTPClient) ExecuteScript(pageID, script string) (*HTTPResponse, error) {
+func (hc *HTTPClient) ExecuteScript(pageID, script string) (any, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 		"script":    script,
 	}
 
-	return hc.doRequest("POST", "/api/page/execute", body)
+	resp, err := hc.doRequest("POST", "/api/page/execute", body)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp.Data["result"], nil
 }
 
 // GetTitle 获取页面标题
-func (hc *HTTPClient) GetTitle(pageID string) (*HTTPResponse, error) {
+func (hc *HTTPClient) GetTitle(pageID string) (string, error) {
 	endpoint := fmt.Sprintf("/api/page/title?sessionId=%s", hc.sessionID)
 	if pageID != "" {
 		endpoint += fmt.Sprintf("&pageId=%s", pageID)
 	}
 
-	return hc.doRequest("GET", endpoint, nil)
+	resp, err := hc.doRequest("GET", endpoint, nil)
+	if err != nil {
+		return "", err
+	}
+
+	if title, ok := resp.Data["title"].(string); ok {
+		return title, nil
+	}
+
+	return "", fmt.Errorf("title not found in response")
 }
 
 // GetURL 获取页面 URL
-func (hc *HTTPClient) GetURL(pageID string) (*HTTPResponse, error) {
+func (hc *HTTPClient) GetURL(pageID string) (string, error) {
 	endpoint := fmt.Sprintf("/api/page/url?sessionId=%s", hc.sessionID)
 	if pageID != "" {
 		endpoint += fmt.Sprintf("&pageId=%s", pageID)
 	}
 
-	return hc.doRequest("GET", endpoint, nil)
+	resp, err := hc.doRequest("GET", endpoint, nil)
+	if err != nil {
+		return "", err
+	}
+
+	if url, ok := resp.Data["url"].(string); ok {
+		return url, nil
+	}
+
+	return "", fmt.Errorf("url not found in response")
 }
 
 // GetHTML 获取页面 HTML
-func (hc *HTTPClient) GetHTML(pageID string) (*HTTPResponse, error) {
+func (hc *HTTPClient) GetHTML(pageID string) (string, error) {
 	endpoint := fmt.Sprintf("/api/page/html?sessionId=%s", hc.sessionID)
 	if pageID != "" {
 		endpoint += fmt.Sprintf("&pageId=%s", pageID)
 	}
 
-	return hc.doRequest("GET", endpoint, nil)
+	resp, err := hc.doRequest("GET", endpoint, nil)
+	if err != nil {
+		return "", err
+	}
+
+	if html, ok := resp.Data["html"].(string); ok {
+		return html, nil
+	}
+
+	return "", fmt.Errorf("html not found in response")
 }
 
 // Screenshot 截图
@@ -267,49 +308,53 @@ func (hc *HTTPClient) Screenshot(pageID, format string) ([]byte, error) {
 }
 
 // RandomWait 随机等待
-func (hc *HTTPClient) RandomWait(pageID string, duration any) (*HTTPResponse, error) {
+func (hc *HTTPClient) RandomWait(pageID string, duration any) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 		"duration":  duration,
 	}
 
-	return hc.doRequest("POST", "/api/page/random-wait", body)
+	_, err := hc.doRequest("POST", "/api/page/random-wait", body)
+	return err
 }
 
 // WaitForLoadStateLoad 等待页面加载完成
-func (hc *HTTPClient) WaitForLoadStateLoad(pageID string) (*HTTPResponse, error) {
+func (hc *HTTPClient) WaitForLoadStateLoad(pageID string) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 	}
 
-	return hc.doRequest("POST", "/api/page/wait-for-load-state-load", body)
+	_, err := hc.doRequest("POST", "/api/page/wait-for-load-state-load", body)
+	return err
 }
 
 // WaitForDomContentLoaded 等待 DOM 加载完成
-func (hc *HTTPClient) WaitForDomContentLoaded(pageID string) (*HTTPResponse, error) {
+func (hc *HTTPClient) WaitForDomContentLoaded(pageID string) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 	}
 
-	return hc.doRequest("POST", "/api/page/wait-for-dom-content-loaded", body)
+	_, err := hc.doRequest("POST", "/api/page/wait-for-dom-content-loaded", body)
+	return err
 }
 
 // WaitForSelectorVisible 等待选择器可见
-func (hc *HTTPClient) WaitForSelectorVisible(pageID, selector string) (*HTTPResponse, error) {
+func (hc *HTTPClient) WaitForSelectorVisible(pageID, selector string) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 		"selector":  selector,
 	}
 
-	return hc.doRequest("POST", "/api/page/wait-for-selector-visible", body)
+	_, err := hc.doRequest("POST", "/api/page/wait-for-selector-visible", body)
+	return err
 }
 
 // ExpectResponseText 等待响应文本
-func (hc *HTTPClient) ExpectResponseText(pageID, urlOrPredicate, callback string) (*HTTPResponse, error) {
+func (hc *HTTPClient) ExpectResponseText(pageID, urlOrPredicate, callback string) (string, error) {
 	body := map[string]any{
 		"sessionId":      hc.sessionID,
 		"pageId":         pageID,
@@ -317,117 +362,176 @@ func (hc *HTTPClient) ExpectResponseText(pageID, urlOrPredicate, callback string
 		"callback":       callback,
 	}
 
-	return hc.doRequest("POST", "/api/page/expect-response-text", body)
+	resp, err := hc.doRequest("POST", "/api/page/expect-response-text", body)
+	if err != nil {
+		return "", err
+	}
+
+	if text, ok := resp.Data["text"].(string); ok {
+		return text, nil
+	}
+
+	return "", fmt.Errorf("text not found in response")
 }
 
 // MustInnerText 必须获取内部文本
-func (hc *HTTPClient) MustInnerText(pageID, selector string) (*HTTPResponse, error) {
+func (hc *HTTPClient) MustInnerText(pageID, selector string) (string, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 		"selector":  selector,
 	}
 
-	return hc.doRequest("POST", "/api/page/must-inner-text", body)
+	resp, err := hc.doRequest("POST", "/api/page/must-inner-text", body)
+	if err != nil {
+		return "", err
+	}
+
+	if text, ok := resp.Data["text"].(string); ok {
+		return text, nil
+	}
+
+	return "", fmt.Errorf("text not found in response")
 }
 
 // MustTextContent 必须获取文本内容
-func (hc *HTTPClient) MustTextContent(pageID, selector string) (*HTTPResponse, error) {
+func (hc *HTTPClient) MustTextContent(pageID, selector string) (string, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 		"selector":  selector,
 	}
 
-	return hc.doRequest("POST", "/api/page/must-text-content", body)
+	resp, err := hc.doRequest("POST", "/api/page/must-text-content", body)
+	if err != nil {
+		return "", err
+	}
+
+	if text, ok := resp.Data["text"].(string); ok {
+		return text, nil
+	}
+
+	return "", fmt.Errorf("text not found in response")
 }
 
 // Suspend 暂停页面
-func (hc *HTTPClient) Suspend(pageID string) (*HTTPResponse, error) {
+func (hc *HTTPClient) Suspend(pageID string) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 	}
 
-	return hc.doRequest("POST", "/api/page/suspend", body)
+	_, err := hc.doRequest("POST", "/api/page/suspend", body)
+	return err
 }
 
 // Continue 继续页面
-func (hc *HTTPClient) Continue(pageID string) (*HTTPResponse, error) {
+func (hc *HTTPClient) Continue(pageID string) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 	}
 
-	return hc.doRequest("POST", "/api/page/continue", body)
+	_, err := hc.doRequest("POST", "/api/page/continue", body)
+	return err
 }
 
 // Release 释放页面锁
-func (hc *HTTPClient) Release(pageID string) (*HTTPResponse, error) {
+func (hc *HTTPClient) Release(pageID string) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 	}
 
-	return hc.doRequest("POST", "/api/page/release", body)
+	_, err := hc.doRequest("POST", "/api/page/release", body)
+	return err
 }
 
 // CloseAll 关闭所有页面
-func (hc *HTTPClient) CloseAll(pageID string) (*HTTPResponse, error) {
+func (hc *HTTPClient) CloseAll(pageID string) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 	}
 
-	return hc.doRequest("POST", "/api/page/close-all", body)
+	_, err := hc.doRequest("POST", "/api/page/close-all", body)
+	return err
 }
 
 // ExpectExtPage 等待新页面
-func (hc *HTTPClient) ExpectExtPage(pageID, callback string) (*HTTPResponse, error) {
+func (hc *HTTPClient) ExpectExtPage(pageID, callback string) (string, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 		"callback":  callback,
 	}
 
-	return hc.doRequest("POST", "/api/page/expect-ext-page", body)
+	resp, err := hc.doRequest("POST", "/api/page/expect-ext-page", body)
+	if err != nil {
+		return "", err
+	}
+
+	if pageID, ok := resp.Data["pageId"].(string); ok {
+		return pageID, nil
+	}
+
+	return "", fmt.Errorf("pageId not found in response")
 }
 
 // ElementExists 检查元素是否存在
-func (hc *HTTPClient) ElementExists(pageID, selector string) (*HTTPResponse, error) {
+func (hc *HTTPClient) ElementExists(pageID, selector string) (bool, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 		"selector":  selector,
 	}
 
-	return hc.doRequest("POST", "/api/element/exists", body)
+	resp, err := hc.doRequest("POST", "/api/element/exists", body)
+	if err != nil {
+		return false, err
+	}
+
+	if exists, ok := resp.Data["exists"].(bool); ok {
+		return exists, nil
+	}
+
+	return false, fmt.Errorf("exists not found in response")
 }
 
 // ElementText 获取元素文本
-func (hc *HTTPClient) ElementText(pageID, selector string) (*HTTPResponse, error) {
+func (hc *HTTPClient) ElementText(pageID, selector string) (string, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 		"selector":  selector,
 	}
 
-	return hc.doRequest("POST", "/api/element/text", body)
+	resp, err := hc.doRequest("POST", "/api/element/text", body)
+	if err != nil {
+		return "", err
+	}
+
+	if text, ok := resp.Data["text"].(string); ok {
+		return text, nil
+	}
+
+	return "", fmt.Errorf("text not found in response")
 }
 
 // ElementClick 点击元素
-func (hc *HTTPClient) ElementClick(pageID, selector string) (*HTTPResponse, error) {
+func (hc *HTTPClient) ElementClick(pageID, selector string) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 		"selector":  selector,
 	}
 
-	return hc.doRequest("POST", "/api/element/click", body)
+	_, err := hc.doRequest("POST", "/api/element/click", body)
+	return err
 }
 
 // ElementSetValue 设置元素值
-func (hc *HTTPClient) ElementSetValue(pageID, selector, value string) (*HTTPResponse, error) {
+func (hc *HTTPClient) ElementSetValue(pageID, selector, value string) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
@@ -435,11 +539,12 @@ func (hc *HTTPClient) ElementSetValue(pageID, selector, value string) (*HTTPResp
 		"value":     value,
 	}
 
-	return hc.doRequest("POST", "/api/element/setValue", body)
+	_, err := hc.doRequest("POST", "/api/element/setValue", body)
+	return err
 }
 
 // ElementWait 等待元素
-func (hc *HTTPClient) ElementWait(pageID, selector string, timeout int) (*HTTPResponse, error) {
+func (hc *HTTPClient) ElementWait(pageID, selector string, timeout int) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
@@ -447,11 +552,12 @@ func (hc *HTTPClient) ElementWait(pageID, selector string, timeout int) (*HTTPRe
 		"timeout":   timeout,
 	}
 
-	return hc.doRequest("POST", "/api/element/wait", body)
+	_, err := hc.doRequest("POST", "/api/element/wait", body)
+	return err
 }
 
 // ElementAttribute 获取元素属性
-func (hc *HTTPClient) ElementAttribute(pageID, selector, attribute string) (*HTTPResponse, error) {
+func (hc *HTTPClient) ElementAttribute(pageID, selector, attribute string) (string, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
@@ -459,22 +565,46 @@ func (hc *HTTPClient) ElementAttribute(pageID, selector, attribute string) (*HTT
 		"attribute": attribute,
 	}
 
-	return hc.doRequest("POST", "/api/element/attribute", body)
+	resp, err := hc.doRequest("POST", "/api/element/attribute", body)
+	if err != nil {
+		return "", err
+	}
+
+	if value, ok := resp.Data["value"].(string); ok {
+		return value, nil
+	}
+
+	return "", fmt.Errorf("value not found in response")
 }
 
 // ElementAllTexts 获取所有匹配元素的文本
-func (hc *HTTPClient) ElementAllTexts(pageID, selector string) (*HTTPResponse, error) {
+func (hc *HTTPClient) ElementAllTexts(pageID, selector string) ([]string, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 		"selector":  selector,
 	}
 
-	return hc.doRequest("POST", "/api/element/all-texts", body)
+	resp, err := hc.doRequest("POST", "/api/element/all-texts", body)
+	if err != nil {
+		return nil, err
+	}
+
+	if texts, ok := resp.Data["texts"].([]any); ok {
+		result := make([]string, len(texts))
+		for i, t := range texts {
+			if s, ok := t.(string); ok {
+				result[i] = s
+			}
+		}
+		return result, nil
+	}
+
+	return nil, fmt.Errorf("texts not found in response")
 }
 
 // ElementAllAttributes 获取所有匹配元素的属性
-func (hc *HTTPClient) ElementAllAttributes(pageID, selector, attribute string) (*HTTPResponse, error) {
+func (hc *HTTPClient) ElementAllAttributes(pageID, selector, attribute string) ([]string, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
@@ -482,18 +612,42 @@ func (hc *HTTPClient) ElementAllAttributes(pageID, selector, attribute string) (
 		"attribute": attribute,
 	}
 
-	return hc.doRequest("POST", "/api/element/all-attributes", body)
+	resp, err := hc.doRequest("POST", "/api/element/all-attributes", body)
+	if err != nil {
+		return nil, err
+	}
+
+	if attributes, ok := resp.Data["attributes"].([]any); ok {
+		result := make([]string, len(attributes))
+		for i, a := range attributes {
+			if s, ok := a.(string); ok {
+				result[i] = s
+			}
+		}
+		return result, nil
+	}
+
+	return nil, fmt.Errorf("attributes not found in response")
 }
 
 // ElementCount 获取元素数量
-func (hc *HTTPClient) ElementCount(pageID, selector string) (*HTTPResponse, error) {
+func (hc *HTTPClient) ElementCount(pageID, selector string) (int, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
 		"pageId":    pageID,
 		"selector":  selector,
 	}
 
-	return hc.doRequest("POST", "/api/element/count", body)
+	resp, err := hc.doRequest("POST", "/api/element/count", body)
+	if err != nil {
+		return 0, err
+	}
+
+	if count, ok := resp.Data["count"].(float64); ok {
+		return int(count), nil
+	}
+
+	return 0, fmt.Errorf("count not found in response")
 }
 
 // GetSessionID 获取会话 ID

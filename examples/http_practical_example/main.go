@@ -15,7 +15,7 @@ func main() {
 	// 连接到现有浏览器（9222 端口）
 	fmt.Println("🚀 开始自动化流程...")
 	fmt.Println("📌 步骤 1: 连接到浏览器（端口 9222）...")
-	if _, err := client.ConnectBrowser(9222); err != nil {
+	if err := client.ConnectBrowser(9222); err != nil {
 		log.Fatalf("❌ 连接浏览器失败: %v", err)
 	}
 	fmt.Println("✅ 已连接到浏览器")
@@ -25,7 +25,7 @@ func main() {
 
 	// 导航到百度
 	fmt.Println("\n📌 步骤 2: 导航到百度首页...")
-	if _, err := client.Navigate(pageID, "https://www.baidu.com"); err != nil {
+	if err := client.Navigate(pageID, "https://www.baidu.com"); err != nil {
 		log.Printf("❌ 导航失败: %v\n", err)
 	} else {
 		fmt.Println("✅ 导航成功")
@@ -37,19 +37,19 @@ func main() {
 
 	// 获取页面标题
 	fmt.Println("\n📌 步骤 4: 获取页面标题...")
-	resp, err := client.GetTitle(pageID)
+	title, err := client.GetTitle(pageID)
 	if err != nil {
 		log.Printf("❌ 获取标题失败: %v\n", err)
 	} else {
-		fmt.Printf("✅ 页面标题: %v\n", resp.Data["title"])
+		fmt.Printf("✅ 页面标题: %s\n", title)
 	}
 
 	// 检查搜索框是否存在
 	fmt.Println("\n📌 步骤 5: 检查搜索框是否存在...")
-	resp, err = client.ElementExists(pageID, "#kw")
+	exists, err := client.ElementExists(pageID, "#kw")
 	if err != nil {
 		log.Printf("❌ 检查元素失败: %v\n", err)
-	} else if exists, ok := resp.Data["exists"].(bool); ok && exists {
+	} else if exists {
 		fmt.Println("✅ 搜索框存在")
 	} else {
 		fmt.Println("⚠️  搜索框不存在")
@@ -57,7 +57,7 @@ func main() {
 
 	// 在搜索框中输入文本
 	fmt.Println("\n📌 步骤 6: 在搜索框中输入文本...")
-	if _, err := client.ElementSetValue(pageID, "#kw", "TypeScript CDP 自动化"); err != nil {
+	if err := client.ElementSetValue(pageID, "#kw", "TypeScript CDP 自动化"); err != nil {
 		log.Printf("❌ 输入文本失败: %v\n", err)
 	} else {
 		fmt.Println("✅ 输入成功")
@@ -65,7 +65,7 @@ func main() {
 
 	// 随机等待（模拟人类行为）
 	fmt.Println("\n📌 步骤 7: 随机等待...")
-	if _, err := client.RandomWait(pageID, "middle"); err != nil {
+	if err := client.RandomWait(pageID, "middle"); err != nil {
 		log.Printf("❌ 随机等待失败: %v\n", err)
 	} else {
 		fmt.Println("✅ 等待完成")
@@ -73,7 +73,7 @@ func main() {
 
 	// 点击搜索按钮
 	fmt.Println("\n📌 步骤 8: 点击搜索按钮...")
-	if _, err := client.ElementClick(pageID, "#su"); err != nil {
+	if err := client.ElementClick(pageID, "#su"); err != nil {
 		log.Printf("❌ 点击失败: %v\n", err)
 	} else {
 		fmt.Println("✅ 点击成功")
@@ -85,23 +85,23 @@ func main() {
 
 	// 获取搜索结果数量
 	fmt.Println("\n📌 步骤 10: 获取搜索结果数量...")
-	resp, err = client.ElementCount(pageID, ".result")
+	count, err := client.ElementCount(pageID, ".result")
 	if err != nil {
 		log.Printf("❌ 获取结果数量失败: %v\n", err)
 	} else {
-		fmt.Printf("✅ 搜索结果数量: %v\n", resp.Data["count"])
+		fmt.Printf("✅ 搜索结果数量: %d\n", count)
 	}
 
 	// 获取所有搜索结果的标题
 	fmt.Println("\n📌 步骤 11: 获取搜索结果标题...")
-	resp, err = client.ElementAllTexts(pageID, ".result h3 a")
+	texts, err := client.ElementAllTexts(pageID, ".result h3 a")
 	if err != nil {
 		log.Printf("❌ 获取标题失败: %v\n", err)
-	} else if texts, ok := resp.Data["texts"].([]any); ok {
+	} else {
 		fmt.Printf("✅ 找到 %d 个结果:\n", len(texts))
 		for i, text := range texts {
 			if i < 5 { // 只显示前5个
-				fmt.Printf("   %d. %v\n", i+1, text)
+				fmt.Printf("   %d. %s\n", i+1, text)
 			}
 		}
 	}
@@ -119,16 +119,16 @@ func main() {
 
 	// 获取页面 HTML（可选）
 	fmt.Println("\n📌 步骤 13: 获取页面 HTML...")
-	resp, err = client.GetHTML(pageID)
+	html, err := client.GetHTML(pageID)
 	if err != nil {
 		log.Printf("❌ 获取 HTML 失败: %v\n", err)
-	} else if html, ok := resp.Data["html"].(string); ok {
+	} else {
 		fmt.Printf("✅ HTML 长度: %d 字符\n", len(html))
 	}
 
 	// 停止浏览器
 	fmt.Println("\n📌 步骤 14: 停止浏览器...")
-	if _, err := client.StopBrowser(); err != nil {
+	if err := client.StopBrowser(); err != nil {
 		log.Printf("❌ 停止浏览器失败: %v\n", err)
 	} else {
 		fmt.Println("✅ 浏览器已停止")

@@ -79,21 +79,19 @@ pageID := "default"
 resp, err := client.Navigate(pageID, "https://example.com")
 
 // 获取页面标题
-resp, err := client.GetTitle(pageID)
-title := resp.Data["title"]
+title, _ := client.GetTitle(pageID)
 
 // 获取页面 URL
-resp, err := client.GetURL(pageID)
-url := resp.Data["url"]
+url, _ := client.GetURL(pageID)
 
 // 刷新页面
-resp, err := client.Reload(pageID)
+err := client.Reload(pageID)
 
 // 执行 JavaScript
-resp, err := client.ExecuteScript(pageID, "document.title")
+err := client.ExecuteScript(pageID, "document.title")
 
 // 截图
-screenshotData, err := client.Screenshot(pageID, "png")
+screenshotData, _ := client.Screenshot(pageID, "png")
 // screenshotData 是 []byte 类型的图片数据
 // 可以保存到文件:
 // err := os.WriteFile("screenshot.png", screenshotData, 0644)
@@ -103,25 +101,22 @@ screenshotData, err := client.Screenshot(pageID, "png")
 
 ```go
 // 检查元素是否存在
-resp, err := client.ElementExists(pageID, "#element-id")
-exists := resp.Data["exists"]
+exists, _ := client.ElementExists(pageID, "#element-id")
 
 // 获取元素文本
-resp, err := client.ElementText(pageID, "h1")
-text := resp.Data["text"]
+text, _ := client.ElementText(pageID, "h1")
 
 // 点击元素
-resp, err := client.ElementClick(pageID, "#button")
+err := client.ElementClick(pageID, "#button")
 
 // 设置输入框值
-resp, err := client.ElementSetValue(pageID, "#input", "hello world")
+err := client.ElementSetValue(pageID, "#input", "hello world")
 
 // 等待元素出现
-resp, err := client.ElementWait(pageID, "#loading", 10000)
+err := client.ElementWait(pageID, "#loading")
 
 // 获取元素属性
-resp, err := client.ElementAttribute(pageID, "#link", "href")
-href := resp.Data["value"]
+href, _ := client.ElementAttribute(pageID, "#link", "href")
 ```
 
 ### 高级功能
@@ -134,35 +129,33 @@ resp, err := client.NavigateWithLoadedState(pageID, "https://example.com")
 resp, err := client.WaitForLoadStateLoad(pageID)
 
 // 等待 DOM 加载完成
-resp, err := client.WaitForDomContentLoaded(pageID)
+err := client.WaitForDomContentLoaded(pageID)
 
 // 等待元素可见
-resp, err := client.WaitForSelectorVisible(pageID, "#element")
+err := client.WaitForSelectorVisible(pageID, "#element")
 
 // 随机等待（模拟人类行为）
-resp, err := client.RandomWait(pageID, "middle") // short/middle/long
+err := client.RandomWait(pageID, "middle") // short/middle/long
 
 // 获取所有匹配元素的文本
-resp, err := client.ElementAllTexts(pageID, ".item")
-texts := resp.Data["texts"]
+texts, _ := client.ElementAllTexts(pageID, ".item")
 
 // 获取元素数量
-resp, err := client.ElementCount(pageID, ".item")
-count := resp.Data["count"]
+count, _ := client.ElementCount(pageID, ".item")
 ```
 
 ### 多页面管理
 
 ```go
 // 创建新页面
-resp, err := client.NewPage("page-1")
+err := client.NewPage("page-1")
 
 // 在不同页面操作
 client.Navigate("page-1", "https://example.com")
 client.Navigate("page-2", "https://google.com")
 
 // 关闭页面
-resp, err := client.ClosePage("page-1")
+err := client.ClosePage("page-1")
 ```
 
 ## 完整示例
@@ -181,7 +174,7 @@ func main() {
     client := cdpsdk.NewHTTPClient("http://localhost:3000", "")
 
     // 连接到浏览器
-    if _, err := client.ConnectBrowser(9222); err != nil {
+    if err := client.ConnectBrowser(9222); err != nil {
         log.Fatal(err)
     }
 
@@ -191,8 +184,8 @@ func main() {
     client.Navigate(pageID, "https://example.com")
 
     // 获取标题
-    resp, _ := client.GetTitle(pageID)
-    log.Printf("Title: %v", resp.Data["title"])
+    title, _ := client.GetTitle(pageID)
+    log.Printf("Title: %s", title)
 
     // 停止
     client.StopBrowser()
@@ -223,12 +216,10 @@ client.WaitForSelectorVisible(pageID, "#success-message")
 client.Navigate(pageID, "https://example.com/items")
 
 // 获取所有项目标题
-resp, _ := client.ElementAllTexts(pageID, ".item-title")
-titles := resp.Data["texts"].([]any)
+titles, _ := client.ElementAllTexts(pageID, ".item-title")
 
 // 获取所有项目链接
-resp, _ = client.ElementAllAttributes(pageID, ".item-title", "href")
-links := resp.Data["attributes"].([]any)
+links, _ := client.ElementAllAttributes(pageID, ".item-title", "href")
 
 // 处理数据
 for i, title := range titles {
@@ -247,56 +238,62 @@ for i, title := range titles {
 ### 页面管理
 
 - `NewPage(pageID string)` - 创建新页面
-- `ClosePage(pageID string)` - 关闭页面
-- `Navigate(pageID, url string)` - 导航到 URL
-- `NavigateWithLoadedState(pageID, url string)` - 导航并等待加载
-- `Reload(pageID string)` - 刷新页面
-- `GetTitle(pageID string)` - 获取页面标题
-- `GetURL(pageID string)` - 获取页面 URL
-- `GetHTML(pageID string)` - 获取页面 HTML
-- `ExecuteScript(pageID, script string)` - 执行 JavaScript
+- `ClosePage(pageID string) error` - 关闭页面
+- `Navigate(pageID, url string) error` - 导航到 URL
+- `NavigateWithLoadedState(pageID, url string) error` - 导航并等待加载
+- `Reload(pageID string) error` - 刷新页面
+- `GetTitle(pageID string) (string, error)` - 获取页面标题
+- `GetURL(pageID string) (string, error)` - 获取页面 URL
+- `GetHTML(pageID string) (string, error)` - 获取页面 HTML
+- `ExecuteScript(pageID, script string) error` - 执行 JavaScript
 - `Screenshot(pageID, format string) ([]byte, error)` - 截图，返回图片的二进制数据
 
 ### 元素操作
 
-- `ElementExists(pageID, selector string)` - 检查元素是否存在
-- `ElementText(pageID, selector string)` - 获取元素文本
-- `ElementClick(pageID, selector string)` - 点击元素
-- `ElementSetValue(pageID, selector, value string)` - 设置元素值
-- `ElementWait(pageID, selector string, timeout int)` - 等待元素
-- `ElementAttribute(pageID, selector, attribute string)` - 获取元素属性
-- `ElementAllTexts(pageID, selector string)` - 获取所有匹配元素的文本
-- `ElementAllAttributes(pageID, selector, attribute string)` - 获取所有匹配元素的属性
-- `ElementCount(pageID, selector string)` - 获取元素数量
+- `ElementExists(pageID, selector string) (bool, error)` - 检查元素是否存在
+- `ElementText(pageID, selector string) (string, error)` - 获取元素文本
+- `ElementClick(pageID, selector string) error` - 点击元素
+- `ElementSetValue(pageID, selector, value string) error` - 设置元素值
+- `ElementWait(pageID, selector string, timeout int) error` - 等待元素
+- `ElementAttribute(pageID, selector, attribute string) (string, error)` - 获取元素属性
+- `ElementAllTexts(pageID, selector string) ([]string, error)` - 获取所有匹配元素的文本
+- `ElementAllAttributes(pageID, selector, attribute string) ([]string, error)` - 获取所有匹配元素的属性
+- `ElementCount(pageID, selector string) (int, error)` - 获取元素数量
 
 ### 等待功能
 
-- `WaitForLoadStateLoad(pageID string)` - 等待页面加载
-- `WaitForDomContentLoaded(pageID string)` - 等待 DOM 加载
-- `WaitForSelectorVisible(pageID, selector string)` - 等待元素可见
-- `RandomWait(pageID string, duration any)` - 随机等待
+- `WaitForLoadStateLoad(pageID string) error` - 等待页面加载
+- `WaitForDomContentLoaded(pageID string) error` - 等待 DOM 加载
+- `WaitForSelectorVisible(pageID, selector string) error` - 等待元素可见
+- `RandomWait(pageID string, duration any) error` - 随机等待
 
 ### 高级功能
 
-- `MustInnerText(pageID, selector string)` - 强制获取内部文本
-- `MustTextContent(pageID, selector string)` - 强制获取文本内容
-- `ExpectResponseText(pageID, urlOrPredicate, callback string)` - 等待响应文本
-- `ExpectExtPage(pageID, callback string)` - 等待新页面
-- `Suspend(pageID string)` - 暂停页面
-- `Continue(pageID string)` - 继续页面
-- `Release(pageID string)` - 释放页面
-- `CloseAll(pageID string)` - 关闭所有页面
+- `MustInnerText(pageID, selector string) (string, error)` - 强制获取内部文本
+- `MustTextContent(pageID, selector string) (string, error)` - 强制获取文本内容
+- `ExpectResponseText(pageID, urlOrPredicate, callback string) (string, error)` - 等待响应文本
+- `ExpectExtPage(pageID, callback string) (string, error)` - 等待新页面
+- `Suspend(pageID string) error` - 暂停页面
+- `Continue(pageID string) error` - 继续页面
+- `Release(pageID string) error` - 释放页面
+- `CloseAll(pageID string) error` - 关闭所有页面
 
 ## 错误处理
 
 ```go
-resp, err := client.Navigate(pageID, "https://example.com")
+err := client.Navigate(pageID, "https://example.com")
 if err != nil {
     log.Printf("请求失败: %v", err)
     return
 }
 
-if !resp.Success {
+// 对于返回具体数据的方法
+title, err := client.GetTitle(pageID)
+if err != nil {
+    log.Printf("获取标题失败: %v", err)
+    return
+}
+log.Printf("标题: %s", title)
     log.Printf("操作失败: %s", resp.Error)
     return
 }

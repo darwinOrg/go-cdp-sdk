@@ -19,19 +19,17 @@ func main() {
 
 	// 1. 连接到浏览器（9222 端口）
 	fmt.Println("\n📌 步骤 1: 连接到浏览器（端口 9222）...")
-	resp, err := client.ConnectBrowser(9222)
-	if err != nil {
+	if err := client.ConnectBrowser(9222); err != nil {
 		log.Fatalf("❌ 连接浏览器失败: %v", err)
 	}
-	fmt.Printf("✅ 已连接到浏览器: sessionId=%s, port=%v\n", client.GetSessionID(), resp.Data["port"])
+	fmt.Printf("✅ 已连接到浏览器: sessionId=%s\n", client.GetSessionID())
 
 	// 使用默认页面
 	pageID := "default"
 
 	// 2. 导航到目标 URL
 	fmt.Printf("\n📌 步骤 2: 导航到 %s...\n", targetURL)
-	resp, err = client.Navigate(pageID, targetURL)
-	if err != nil {
+	if err := client.Navigate(pageID, targetURL); err != nil {
 		log.Printf("❌ 导航失败: %v\n", err)
 		return
 	}
@@ -44,28 +42,28 @@ func main() {
 
 	// 4. 获取页面标题
 	fmt.Println("\n📌 步骤 4: 获取页面标题...")
-	resp, err = client.GetTitle(pageID)
+	title, err := client.GetTitle(pageID)
 	if err != nil {
 		log.Printf("❌ 获取标题失败: %v\n", err)
-	} else if title, ok := resp.Data["title"].(string); ok {
+	} else {
 		fmt.Printf("✅ 页面标题: %s\n", title)
 	}
 
 	// 5. 获取页面 URL
 	fmt.Println("\n📌 步骤 5: 获取页面 URL...")
-	resp, err = client.GetURL(pageID)
+	url, err := client.GetURL(pageID)
 	if err != nil {
 		log.Printf("❌ 获取 URL 失败: %v\n", err)
-	} else if url, ok := resp.Data["url"].(string); ok {
+	} else {
 		fmt.Printf("✅ 页面 URL: %s\n", url)
 	}
 
 	// 6. 检查页面标题元素
 	fmt.Println("\n📌 步骤 6: 检查页面标题元素...")
-	resp, err = client.ElementExists(pageID, "h1")
+	exists, err := client.ElementExists(pageID, "h1")
 	if err != nil {
 		log.Printf("❌ 检查元素失败: %v\n", err)
-	} else if exists, ok := resp.Data["exists"].(bool); ok {
+	} else {
 		fmt.Printf("✅ h1 元素存在: %v\n", exists)
 	}
 
@@ -79,19 +77,15 @@ func main() {
 	}
 
 	for _, selector := range jobTitleSelectors {
-		resp, err = client.ElementExists(pageID, selector)
-		if err == nil && resp.Success {
-			if exists, ok := resp.Data["exists"].(bool); ok && exists {
-				fmt.Printf("✅ 找到职位标题元素: %s\n", selector)
-				// 尝试获取文本
-				resp, err = client.ElementText(pageID, selector)
-				if err == nil && resp.Success {
-					if text, ok := resp.Data["text"].(string); ok {
-						fmt.Printf("   职位标题: %s\n", text)
-					}
-				}
-				break
+		exists, err := client.ElementExists(pageID, selector)
+		if err == nil && exists {
+			fmt.Printf("✅ 找到职位标题元素: %s\n", selector)
+			// 尝试获取文本
+			text, err := client.ElementText(pageID, selector)
+			if err == nil {
+				fmt.Printf("   职位标题: %s\n", text)
 			}
+			break
 		}
 	}
 
@@ -105,19 +99,15 @@ func main() {
 	}
 
 	for _, selector := range companySelectors {
-		resp, err = client.ElementExists(pageID, selector)
-		if err == nil && resp.Success {
-			if exists, ok := resp.Data["exists"].(bool); ok && exists {
-				fmt.Printf("✅ 找到公司名称元素: %s\n", selector)
-				// 尝试获取文本
-				resp, err = client.ElementText(pageID, selector)
-				if err == nil && resp.Success {
-					if text, ok := resp.Data["text"].(string); ok {
-						fmt.Printf("   公司名称: %s\n", text)
-					}
-				}
-				break
+		exists, err := client.ElementExists(pageID, selector)
+		if err == nil && exists {
+			fmt.Printf("✅ 找到公司名称元素: %s\n", selector)
+			// 尝试获取文本
+			text, err := client.ElementText(pageID, selector)
+			if err == nil {
+				fmt.Printf("   公司名称: %s\n", text)
 			}
+			break
 		}
 	}
 
@@ -131,28 +121,24 @@ func main() {
 	}
 
 	for _, selector := range salarySelectors {
-		resp, err = client.ElementExists(pageID, selector)
-		if err == nil && resp.Success {
-			if exists, ok := resp.Data["exists"].(bool); ok && exists {
-				fmt.Printf("✅ 找到薪资元素: %s\n", selector)
-				// 尝试获取文本
-				resp, err = client.ElementText(pageID, selector)
-				if err == nil && resp.Success {
-					if text, ok := resp.Data["text"].(string); ok {
-						fmt.Printf("   薪资: %s\n", text)
-					}
-				}
-				break
+		exists, err := client.ElementExists(pageID, selector)
+		if err == nil && exists {
+			fmt.Printf("✅ 找到薪资元素: %s\n", selector)
+			// 尝试获取文本
+			text, err := client.ElementText(pageID, selector)
+			if err == nil {
+				fmt.Printf("   薪资: %s\n", text)
 			}
+			break
 		}
 	}
 
 	// 10. 获取页面 HTML（前 500 字符）
 	fmt.Println("\n📌 步骤 10: 获取页面 HTML（前 500 字符）...")
-	resp, err = client.GetHTML(pageID)
+	html, err := client.GetHTML(pageID)
 	if err != nil {
 		log.Printf("❌ 获取 HTML 失败: %v\n", err)
-	} else if html, ok := resp.Data["html"].(string); ok {
+	} else {
 		preview := html
 		if len(preview) > 500 {
 			preview = preview[:500]
@@ -171,10 +157,9 @@ func main() {
 
 	// 12. 停止浏览器
 	fmt.Println("\n📌 步骤 12: 停止浏览器...")
-	resp, err = client.StopBrowser()
-	if err != nil {
+	if err := client.StopBrowser(); err != nil {
 		log.Printf("❌ 停止浏览器失败: %v\n", err)
-	} else if resp.Success {
+	} else {
 		fmt.Println("✅ 浏览器已停止")
 	}
 
