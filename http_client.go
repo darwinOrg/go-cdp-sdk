@@ -403,28 +403,6 @@ func (hc *HTTPClient) MustTextContent(pageID, selector string) (string, error) {
 	return "", fmt.Errorf("text not found in response")
 }
 
-// Suspend 暂停页面
-func (hc *HTTPClient) Suspend(pageID string) error {
-	body := map[string]any{
-		"sessionId": hc.sessionID,
-		"pageId":    pageID,
-	}
-
-	_, err := hc.doRequest("POST", "/api/page/suspend", body)
-	return err
-}
-
-// Continue 继续页面
-func (hc *HTTPClient) Continue(pageID string) error {
-	body := map[string]any{
-		"sessionId": hc.sessionID,
-		"pageId":    pageID,
-	}
-
-	_, err := hc.doRequest("POST", "/api/page/continue", body)
-	return err
-}
-
 // Release 释放页面锁
 func (hc *HTTPClient) Release(pageID string) error {
 	body := map[string]any{

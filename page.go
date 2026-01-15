@@ -138,17 +138,7 @@ func (p *Page) ExpectExtPage(callback string) (string, error) {
 	return p.client.ExpectExtPage(p.pageID, callback)
 }
 
-// Suspend 暂停页面
-func (p *Page) Suspend() error {
-	return p.client.Suspend(p.pageID)
-}
-
-// Continue 继续页面
-func (p *Page) Continue() error {
-	return p.client.Continue(p.pageID)
-}
-
-// Release 释放页面锁
+// Release 释放页面
 func (p *Page) Release() error {
 	return p.client.Release(p.pageID)
 }
