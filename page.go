@@ -237,17 +237,3 @@ func (p *Page) PrintURL() error {
 	fmt.Printf("页面 URL: %s\n", url)
 	return nil
 }
-
-// LogInfo 记录信息
-func (p *Page) LogInfo(message string) {
-	fmt.Printf("[Page %s] %s\n", p.pageID, message)
-}
-
-// LogError 记录错误
-func (p *Page) LogError(message string, err error) {
-	if err != nil {
-		fmt.Printf("[Page %s] ERROR: %s: %v\n", p.pageID, message, err)
-	} else {
-		fmt.Printf("[Page %s] ERROR: %s\n", p.pageID, message)
-	}
-}

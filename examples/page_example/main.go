@@ -81,7 +81,7 @@ func main() {
 	// 7. 链式操作
 	fmt.Println("\n7️⃣ 链式操作...")
 	if err := page.NavigateThen("https://www.baidu.com", func(p *cdpsdk.Page) error {
-		p.LogInfo("导航到百度完成")
+		fmt.Println("导航到百度完成")
 		return p.WaitForLoadStateLoad()
 	}); err != nil {
 		log.Printf("❌ 链式操作失败: %v\n", err)
