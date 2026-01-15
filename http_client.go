@@ -155,17 +155,6 @@ func (hc *HTTPClient) StopBrowser() error {
 	return err
 }
 
-// NewPage 创建新页面
-func (hc *HTTPClient) NewPage(pageID string) error {
-	body := map[string]any{
-		"sessionId": hc.sessionID,
-		"pageId":    pageID,
-	}
-
-	_, err := hc.doRequest("POST", "/api/page/new", body)
-	return err
-}
-
 // ClosePage 关闭页面
 func (hc *HTTPClient) ClosePage(pageID string) error {
 	body := map[string]any{
@@ -653,6 +642,16 @@ func (hc *HTTPClient) ElementCount(pageID, selector string) (int, error) {
 // GetSessionID 获取会话 ID
 func (hc *HTTPClient) GetSessionID() string {
 	return hc.sessionID
+}
+
+// NewPage 创建页面实例
+func (hc *HTTPClient) NewPage(pageID string) *Page {
+	return NewPage(hc, pageID)
+}
+
+// GetDefaultPage 获取默认页面实例
+func (hc *HTTPClient) GetDefaultPage() *Page {
+	return NewPage(hc, "default")
 }
 
 // SetTimeout 设置请求超时时间
