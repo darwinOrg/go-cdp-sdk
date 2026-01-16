@@ -25,11 +25,10 @@ type HTTPResponse struct {
 }
 
 // NewHTTPClient 创建新的 HTTP 客户端
-// sessionID 可以为空，会在调用 StartBrowser 或 ConnectBrowser 时自动生成
-func NewHTTPClient(baseURL, sessionID string) *HTTPClient {
+func NewHTTPClient(baseURL string) *HTTPClient {
 	return &HTTPClient{
-		baseURL:   baseURL,
-		sessionID: sessionID,
+		baseURL: baseURL,
+		// sessionID会在调用 StartBrowser 或 ConnectBrowser 时自动生成
 		httpClient: &http.Client{
 			Timeout: 5 * time.Minute, // 增加超时时间到 5 分钟
 		},

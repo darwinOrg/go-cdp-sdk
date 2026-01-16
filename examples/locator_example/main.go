@@ -9,7 +9,7 @@ import (
 
 func main() {
 	// 创建 HTTP 客户端
-	client := cdpsdk.NewHTTPClient("http://localhost:3000", "locator-test")
+	client := cdpsdk.NewHTTPClient("http://localhost:3000")
 
 	// 连接到浏览器
 	fmt.Println("🚀 测试 Locator 功能...")
@@ -22,7 +22,7 @@ func main() {
 
 	// 导航到测试页面
 	fmt.Println("\n📌 导航到示例页面...")
-	if err := page.Navigate( "https://example.com"); err != nil {
+	if err := page.Navigate("https://example.com"); err != nil {
 		log.Fatalf("❌ 导航失败: %v", err)
 	}
 
@@ -31,7 +31,7 @@ func main() {
 
 	// 1. 单级 Locator
 	fmt.Println("1️⃣ 单级 Locator:")
-	h1Locator := page.Locator( "h1")
+	h1Locator := page.Locator("h1")
 	fmt.Printf("   选择器: %v\n", h1Locator.GetSelectors())
 	h1Text, err := h1Locator.Text()
 	if err != nil {
@@ -42,7 +42,7 @@ func main() {
 
 	// 2. 二级 Locator
 	fmt.Println("\n2️⃣ 二级 Locator:")
-	bodyLocator := page.Locator( "body")
+	bodyLocator := page.Locator("body")
 	pLocator := bodyLocator.Locator("p")
 	fmt.Printf("   选择器链: %v\n", pLocator.GetSelectors())
 	fmt.Printf("   最终选择器: %s\n", pLocator.GetSelector())
@@ -55,7 +55,7 @@ func main() {
 
 	// 3. 三级 Locator
 	fmt.Println("\n3️⃣ 三级 Locator:")
-	divLocator := page.Locator( "div")
+	divLocator := page.Locator("div")
 	pLocator2 := divLocator.Locator("p")
 	aLocator := pLocator2.Locator("a")
 	fmt.Printf("   选择器链: %v\n", aLocator.GetSelectors())
@@ -69,7 +69,7 @@ func main() {
 
 	// 4. 使用链式调用点击元素
 	fmt.Println("\n4️⃣ 链式调用 + 点击:")
-	linkLocator := page.Locator( "div").Locator("p").Locator("a")
+	linkLocator := page.Locator("div").Locator("p").Locator("a")
 	exists, err = linkLocator.Exists()
 	if err != nil {
 		log.Printf("❌ 检查存在失败: %v\n", err)

@@ -10,7 +10,7 @@ import (
 
 func main() {
 	// 创建 HTTP 客户端
-	client := cdpsdk.NewHTTPClient("http://localhost:3000", "test-zhipin-session")
+	client := cdpsdk.NewHTTPClient("http://localhost:3000")
 
 	// 目标 URL
 	targetURL := "https://www.zhipin.com/gongsi/job/5d627415a46b4a750nJ9.html?ka=company-jobs"
@@ -29,7 +29,7 @@ func main() {
 
 	// 2. 导航到目标 URL
 	fmt.Printf("\n📌 步骤 2: 导航到 %s...\n", targetURL)
-	if err := page.Navigate( targetURL); err != nil {
+	if err := page.Navigate(targetURL); err != nil {
 		log.Printf("❌ 导航失败: %v\n", err)
 		return
 	}
@@ -155,7 +155,7 @@ func main() {
 
 	// 11. 截图
 	fmt.Println("\n📌 步骤 11: 截图...")
-	screenshotData, err := page.Screenshot( "png")
+	screenshotData, err := page.Screenshot("png")
 	if err != nil {
 		log.Printf("❌ 截图失败: %v\n", err)
 	} else {

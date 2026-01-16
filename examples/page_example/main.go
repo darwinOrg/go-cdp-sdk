@@ -9,7 +9,7 @@ import (
 
 func main() {
 	// 创建 HTTP 客户端
-	client := cdpsdk.NewHTTPClient("http://localhost:3000", "page-test")
+	client := cdpsdk.NewHTTPClient("http://localhost:3000")
 
 	// 连接到浏览器
 	fmt.Println("🚀 测试 Page 结构体功能...")

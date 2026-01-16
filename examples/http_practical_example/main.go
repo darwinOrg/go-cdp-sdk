@@ -10,7 +10,7 @@ import (
 
 func main() {
 	// 创建 HTTP 客户端
-	client := cdpsdk.NewHTTPClient("http://localhost:3000", "my-automation-session")
+	client := cdpsdk.NewHTTPClient("http://localhost:3000")
 
 	// 连接到现有浏览器（9222 端口）
 	fmt.Println("🚀 开始自动化流程...")
@@ -24,7 +24,7 @@ func main() {
 
 	// 导航到百度
 	fmt.Println("\n📌 步骤 2: 导航到百度首页...")
-	if err := page.Navigate( "https://www.baidu.com"); err != nil {
+	if err := page.Navigate("https://www.baidu.com"); err != nil {
 		log.Printf("❌ 导航失败: %v\n", err)
 	} else {
 		fmt.Println("✅ 导航成功")
@@ -104,7 +104,7 @@ func main() {
 
 	// 截图保存当前状态
 	fmt.Println("\n📌 步骤 12: 截图...")
-	screenshotData, err := page.Screenshot( "png")
+	screenshotData, err := page.Screenshot("png")
 	if err != nil {
 		log.Printf("❌ 截图失败: %v\n", err)
 	} else {

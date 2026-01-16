@@ -9,7 +9,7 @@ import (
 
 func main() {
 	// 创建 HTTP 客户端
-	client := cdpsdk.NewHTTPClient("http://localhost:3000", "")
+	client := cdpsdk.NewHTTPClient("http://localhost:3000")
 
 	// 连接到现有浏览器（9222 端口）
 	fmt.Println("📌 连接到现有浏览器（端口 9222）...")
