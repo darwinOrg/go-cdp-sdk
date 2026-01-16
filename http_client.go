@@ -194,10 +194,10 @@ func (hc *HTTPClient) StopBrowser() error {
 }
 
 // ClosePage 关闭页面
-func (hc *HTTPClient) ClosePage(pageID string) error {
+func (hc *HTTPClient) ClosePage(page *Page) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
-		"pageId":    pageID,
+		"pageId":    page.pageID,
 	}
 
 	_, err := hc.doRequest("POST", "/api/page/close", body)
@@ -205,10 +205,10 @@ func (hc *HTTPClient) ClosePage(pageID string) error {
 }
 
 // Navigate 导航到 URL
-func (hc *HTTPClient) Navigate(pageID, url string) error {
+func (hc *HTTPClient) Navigate(page *Page, url string) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
-		"pageId":    pageID,
+		"pageId":    page.pageID,
 		"url":       url,
 	}
 
@@ -217,10 +217,10 @@ func (hc *HTTPClient) Navigate(pageID, url string) error {
 }
 
 // NavigateWithLoadedState 导航并等待加载完成
-func (hc *HTTPClient) NavigateWithLoadedState(pageID, url string) error {
+func (hc *HTTPClient) NavigateWithLoadedState(page *Page, url string) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
-		"pageId":    pageID,
+		"pageId":    page.pageID,
 		"url":       url,
 	}
 
@@ -229,10 +229,10 @@ func (hc *HTTPClient) NavigateWithLoadedState(pageID, url string) error {
 }
 
 // Reload 刷新页面
-func (hc *HTTPClient) Reload(pageID string) error {
+func (hc *HTTPClient) Reload(page *Page) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
-		"pageId":    pageID,
+		"pageId":    page.pageID,
 	}
 
 	_, err := hc.doRequest("POST", "/api/page/reload", body)
@@ -240,10 +240,10 @@ func (hc *HTTPClient) Reload(pageID string) error {
 }
 
 // ReloadWithLoadedState 刷新并等待加载完成
-func (hc *HTTPClient) ReloadWithLoadedState(pageID string) error {
+func (hc *HTTPClient) ReloadWithLoadedState(page *Page) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
-		"pageId":    pageID,
+		"pageId":    page.pageID,
 	}
 
 	_, err := hc.doRequest("POST", "/api/page/reload-with-loaded-state", body)
@@ -251,10 +251,10 @@ func (hc *HTTPClient) ReloadWithLoadedState(pageID string) error {
 }
 
 // ExecuteScript 执行 JavaScript
-func (hc *HTTPClient) ExecuteScript(pageID, script string) (any, error) {
+func (hc *HTTPClient) ExecuteScript(page *Page, script string) (any, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
-		"pageId":    pageID,
+		"pageId":    page.pageID,
 		"script":    script,
 	}
 
@@ -267,10 +267,10 @@ func (hc *HTTPClient) ExecuteScript(pageID, script string) (any, error) {
 }
 
 // GetTitle 获取页面标题
-func (hc *HTTPClient) GetTitle(pageID string) (string, error) {
+func (hc *HTTPClient) GetTitle(page *Page) (string, error) {
 	endpoint := fmt.Sprintf("/api/page/title?sessionId=%s", hc.sessionID)
-	if pageID != "" {
-		endpoint += fmt.Sprintf("&pageId=%s", pageID)
+	if page.pageID != "" {
+		endpoint += fmt.Sprintf("&pageId=%s", page.pageID)
 	}
 
 	resp, err := hc.doRequest("GET", endpoint, nil)
@@ -286,10 +286,10 @@ func (hc *HTTPClient) GetTitle(pageID string) (string, error) {
 }
 
 // GetURL 获取页面 URL
-func (hc *HTTPClient) GetURL(pageID string) (string, error) {
+func (hc *HTTPClient) GetURL(page *Page) (string, error) {
 	endpoint := fmt.Sprintf("/api/page/url?sessionId=%s", hc.sessionID)
-	if pageID != "" {
-		endpoint += fmt.Sprintf("&pageId=%s", pageID)
+	if page.pageID != "" {
+		endpoint += fmt.Sprintf("&pageId=%s", page.pageID)
 	}
 
 	resp, err := hc.doRequest("GET", endpoint, nil)
@@ -305,10 +305,10 @@ func (hc *HTTPClient) GetURL(pageID string) (string, error) {
 }
 
 // GetHTML 获取页面 HTML
-func (hc *HTTPClient) GetHTML(pageID string) (string, error) {
+func (hc *HTTPClient) GetHTML(page *Page) (string, error) {
 	endpoint := fmt.Sprintf("/api/page/html?sessionId=%s", hc.sessionID)
-	if pageID != "" {
-		endpoint += fmt.Sprintf("&pageId=%s", pageID)
+	if page.pageID != "" {
+		endpoint += fmt.Sprintf("&pageId=%s", page.pageID)
 	}
 
 	resp, err := hc.doRequest("GET", endpoint, nil)
@@ -324,10 +324,10 @@ func (hc *HTTPClient) GetHTML(pageID string) (string, error) {
 }
 
 // Screenshot 截图
-func (hc *HTTPClient) Screenshot(pageID, format string) ([]byte, error) {
+func (hc *HTTPClient) Screenshot(page *Page, format string) ([]byte, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
-		"pageId":    pageID,
+		"pageId":    page.pageID,
 		"format":    format,
 	}
 
@@ -335,10 +335,10 @@ func (hc *HTTPClient) Screenshot(pageID, format string) ([]byte, error) {
 }
 
 // WaitForLoadStateLoad 等待页面加载完成
-func (hc *HTTPClient) WaitForLoadStateLoad(pageID string) error {
+func (hc *HTTPClient) WaitForLoadStateLoad(page *Page) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
-		"pageId":    pageID,
+		"pageId":    page.pageID,
 	}
 
 	_, err := hc.doRequest("POST", "/api/page/wait-for-load-state-load", body)
@@ -346,10 +346,10 @@ func (hc *HTTPClient) WaitForLoadStateLoad(pageID string) error {
 }
 
 // WaitForDomContentLoaded 等待 DOM 加载完成
-func (hc *HTTPClient) WaitForDomContentLoaded(pageID string) error {
+func (hc *HTTPClient) WaitForDomContentLoaded(page *Page) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
-		"pageId":    pageID,
+		"pageId":    page.pageID,
 	}
 
 	_, err := hc.doRequest("POST", "/api/page/wait-for-dom-content-loaded", body)
@@ -357,10 +357,10 @@ func (hc *HTTPClient) WaitForDomContentLoaded(pageID string) error {
 }
 
 // WaitForSelectorVisible 等待选择器可见
-func (hc *HTTPClient) WaitForSelectorVisible(pageID, selector string) error {
+func (hc *HTTPClient) WaitForSelectorVisible(page *Page, selector string) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
-		"pageId":    pageID,
+		"pageId":    page.pageID,
 		"selector":  selector,
 	}
 
@@ -369,10 +369,10 @@ func (hc *HTTPClient) WaitForSelectorVisible(pageID, selector string) error {
 }
 
 // ExpectResponseText 等待响应文本
-func (hc *HTTPClient) ExpectResponseText(pageID, urlOrPredicate, callback string) (string, error) {
+func (hc *HTTPClient) ExpectResponseText(page *Page, urlOrPredicate, callback string) (string, error) {
 	body := map[string]any{
 		"sessionId":      hc.sessionID,
-		"pageId":         pageID,
+		"pageId":         page.pageID,
 		"urlOrPredicate": urlOrPredicate,
 		"callback":       callback,
 	}
@@ -390,10 +390,10 @@ func (hc *HTTPClient) ExpectResponseText(pageID, urlOrPredicate, callback string
 }
 
 // MustInnerText 必须获取内部文本
-func (hc *HTTPClient) MustInnerText(pageID, selector string) (string, error) {
+func (hc *HTTPClient) MustInnerText(page *Page, selector string) (string, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
-		"pageId":    pageID,
+		"pageId":    page.pageID,
 		"selector":  selector,
 	}
 
@@ -410,10 +410,10 @@ func (hc *HTTPClient) MustInnerText(pageID, selector string) (string, error) {
 }
 
 // MustTextContent 必须获取文本内容
-func (hc *HTTPClient) MustTextContent(pageID, selector string) (string, error) {
+func (hc *HTTPClient) MustTextContent(page *Page, selector string) (string, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
-		"pageId":    pageID,
+		"pageId":    page.pageID,
 		"selector":  selector,
 	}
 
@@ -430,10 +430,10 @@ func (hc *HTTPClient) MustTextContent(pageID, selector string) (string, error) {
 }
 
 // Release 释放页面锁
-func (hc *HTTPClient) Release(pageID string) error {
+func (hc *HTTPClient) Release(page *Page) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
-		"pageId":    pageID,
+		"pageId":    page.pageID,
 	}
 
 	_, err := hc.doRequest("POST", "/api/page/release", body)
@@ -441,10 +441,10 @@ func (hc *HTTPClient) Release(pageID string) error {
 }
 
 // CloseAll 关闭所有页面
-func (hc *HTTPClient) CloseAll(pageID string) error {
+func (hc *HTTPClient) CloseAll(page *Page) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
-		"pageId":    pageID,
+		"pageId":    page.pageID,
 	}
 
 	_, err := hc.doRequest("POST", "/api/page/close-all", body)
@@ -452,10 +452,10 @@ func (hc *HTTPClient) CloseAll(pageID string) error {
 }
 
 // ExpectExtPage 等待新页面
-func (hc *HTTPClient) ExpectExtPage(pageID, callback string) (string, error) {
+func (hc *HTTPClient) ExpectExtPage(page *Page, callback string) (string, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
-		"pageId":    pageID,
+		"pageId":    page.pageID,
 		"callback":  callback,
 	}
 
@@ -472,10 +472,10 @@ func (hc *HTTPClient) ExpectExtPage(pageID, callback string) (string, error) {
 }
 
 // ElementExists 检查元素是否存在
-func (hc *HTTPClient) ElementExists(pageID, selector string) (bool, error) {
+func (hc *HTTPClient) ElementExists(page *Page, selector string) (bool, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
-		"pageId":    pageID,
+		"pageId":    page.pageID,
 		"selector":  selector,
 	}
 
@@ -492,10 +492,10 @@ func (hc *HTTPClient) ElementExists(pageID, selector string) (bool, error) {
 }
 
 // ElementText 获取元素文本
-func (hc *HTTPClient) ElementText(pageID, selector string) (string, error) {
+func (hc *HTTPClient) ElementText(page *Page, selector string) (string, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
-		"pageId":    pageID,
+		"pageId":    page.pageID,
 		"selector":  selector,
 	}
 
@@ -512,10 +512,10 @@ func (hc *HTTPClient) ElementText(pageID, selector string) (string, error) {
 }
 
 // ElementClick 点击元素
-func (hc *HTTPClient) ElementClick(pageID, selector string) error {
+func (hc *HTTPClient) ElementClick(page *Page, selector string) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
-		"pageId":    pageID,
+		"pageId":    page.pageID,
 		"selector":  selector,
 	}
 
@@ -524,10 +524,10 @@ func (hc *HTTPClient) ElementClick(pageID, selector string) error {
 }
 
 // ElementHover 鼠标悬停
-func (hc *HTTPClient) ElementHover(pageID, selector string) error {
+func (hc *HTTPClient) ElementHover(page *Page, selector string) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
-		"pageId":    pageID,
+		"pageId":    page.pageID,
 		"selector":  selector,
 	}
 
@@ -536,10 +536,10 @@ func (hc *HTTPClient) ElementHover(pageID, selector string) error {
 }
 
 // ElementSetValue 设置元素值
-func (hc *HTTPClient) ElementSetValue(pageID, selector, value string) error {
+func (hc *HTTPClient) ElementSetValue(page *Page, selector, value string) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
-		"pageId":    pageID,
+		"pageId":    page.pageID,
 		"selector":  selector,
 		"value":     value,
 	}
@@ -549,10 +549,10 @@ func (hc *HTTPClient) ElementSetValue(pageID, selector, value string) error {
 }
 
 // ElementWait 等待元素
-func (hc *HTTPClient) ElementWait(pageID, selector string, timeout int) error {
+func (hc *HTTPClient) ElementWait(page *Page, selector string, timeout int) error {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
-		"pageId":    pageID,
+		"pageId":    page.pageID,
 		"selector":  selector,
 		"timeout":   timeout,
 	}
@@ -562,10 +562,10 @@ func (hc *HTTPClient) ElementWait(pageID, selector string, timeout int) error {
 }
 
 // ElementAttribute 获取元素属性
-func (hc *HTTPClient) ElementAttribute(pageID, selector, attribute string) (string, error) {
+func (hc *HTTPClient) ElementAttribute(page *Page, selector, attribute string) (string, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
-		"pageId":    pageID,
+		"pageId":    page.pageID,
 		"selector":  selector,
 		"attribute": attribute,
 	}
@@ -583,10 +583,10 @@ func (hc *HTTPClient) ElementAttribute(pageID, selector, attribute string) (stri
 }
 
 // ElementAllTexts 获取所有匹配元素的文本
-func (hc *HTTPClient) ElementAllTexts(pageID, selector string) ([]string, error) {
+func (hc *HTTPClient) ElementAllTexts(page *Page, selector string) ([]string, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
-		"pageId":    pageID,
+		"pageId":    page.pageID,
 		"selector":  selector,
 	}
 
@@ -609,10 +609,10 @@ func (hc *HTTPClient) ElementAllTexts(pageID, selector string) ([]string, error)
 }
 
 // ElementAllAttributes 获取所有匹配元素的属性
-func (hc *HTTPClient) ElementAllAttributes(pageID, selector, attribute string) ([]string, error) {
+func (hc *HTTPClient) ElementAllAttributes(page *Page, selector, attribute string) ([]string, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
-		"pageId":    pageID,
+		"pageId":    page.pageID,
 		"selector":  selector,
 		"attribute": attribute,
 	}
@@ -636,10 +636,10 @@ func (hc *HTTPClient) ElementAllAttributes(pageID, selector, attribute string) (
 }
 
 // ElementCount 获取元素数量
-func (hc *HTTPClient) ElementCount(pageID, selector string) (int, error) {
+func (hc *HTTPClient) ElementCount(page *Page, selector string) (int, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionID,
-		"pageId":    pageID,
+		"pageId":    page.pageID,
 		"selector":  selector,
 	}
 
