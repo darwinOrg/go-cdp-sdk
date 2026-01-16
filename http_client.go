@@ -547,12 +547,3 @@ func (hc *HTTPClient) ElementCount(selector string) (int, error) {
 	return 0, fmt.Errorf("count not found in response")
 }
 
-// GetSessionID 获取会话 ID
-func (hc *HTTPClient) GetSessionID() string {
-	return hc.sessionId
-}
-
-// SetTimeout 设置请求超时时间
-func (hc *HTTPClient) SetTimeout(timeout time.Duration) {
-	hc.httpClient.Timeout = timeout
-}
