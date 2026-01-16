@@ -20,12 +20,11 @@ func main() {
 	}
 	fmt.Println("✅ 已连接到浏览器")
 
-	// 使用默认页面
-	pageID := "default"
+	page, _ := client.GetPage("default")
 
 	// 导航到百度
 	fmt.Println("\n📌 步骤 2: 导航到百度首页...")
-	if err := client.Navigate(pageID, "https://www.baidu.com"); err != nil {
+	if err := page.Navigate( "https://www.baidu.com"); err != nil {
 		log.Printf("❌ 导航失败: %v\n", err)
 	} else {
 		fmt.Println("✅ 导航成功")
@@ -37,7 +36,7 @@ func main() {
 
 	// 获取页面标题
 	fmt.Println("\n📌 步骤 4: 获取页面标题...")
-	title, err := client.GetTitle(pageID)
+	title, err := page.GetTitle()
 	if err != nil {
 		log.Printf("❌ 获取标题失败: %v\n", err)
 	} else {
@@ -46,7 +45,8 @@ func main() {
 
 	// 检查搜索框是否存在
 	fmt.Println("\n📌 步骤 5: 检查搜索框是否存在...")
-	exists, err := client.ElementExists(pageID, "#kw")
+	locator := page.Locator("#kw")
+	exists, err := locator.Exists()
 	if err != nil {
 		log.Printf("❌ 检查元素失败: %v\n", err)
 	} else if exists {
@@ -57,7 +57,7 @@ func main() {
 
 	// 在搜索框中输入文本
 	fmt.Println("\n📌 步骤 6: 在搜索框中输入文本...")
-	if err := client.ElementSetValue(pageID, "#kw", "TypeScript CDP 自动化"); err != nil {
+	if err := page.Locator("#kw").SetValue("TypeScript CDP 自动化"); err != nil {
 		log.Printf("❌ 输入文本失败: %v\n", err)
 	} else {
 		fmt.Println("✅ 输入成功")
@@ -65,7 +65,7 @@ func main() {
 
 	// 点击搜索按钮
 	fmt.Println("\n📌 步骤 7: 点击搜索按钮...")
-	if err := client.ElementClick(pageID, "#su"); err != nil {
+	if err := page.Locator("#su").Click(); err != nil {
 		log.Printf("❌ 点击失败: %v\n", err)
 	} else {
 		fmt.Println("✅ 点击成功")
@@ -77,7 +77,9 @@ func main() {
 
 	// 获取搜索结果数量
 	fmt.Println("\n📌 步骤 10: 获取搜索结果数量...")
-	count, err := client.ElementCount(pageID, ".result")
+	locator = page.Locator(".result")
+	var count int
+	count, err = locator.Count()
 	if err != nil {
 		log.Printf("❌ 获取结果数量失败: %v\n", err)
 	} else {
@@ -86,7 +88,9 @@ func main() {
 
 	// 获取所有搜索结果的标题
 	fmt.Println("\n📌 步骤 11: 获取搜索结果标题...")
-	texts, err := client.ElementAllTexts(pageID, ".result h3 a")
+	locator = page.Locator(".result h3 a")
+	var texts []string
+	texts, err = locator.AllTexts()
 	if err != nil {
 		log.Printf("❌ 获取标题失败: %v\n", err)
 	} else {
@@ -100,7 +104,7 @@ func main() {
 
 	// 截图保存当前状态
 	fmt.Println("\n📌 步骤 12: 截图...")
-	screenshotData, err := client.Screenshot(pageID, "png")
+	screenshotData, err := page.Screenshot( "png")
 	if err != nil {
 		log.Printf("❌ 截图失败: %v\n", err)
 	} else {
@@ -111,7 +115,7 @@ func main() {
 
 	// 获取页面 HTML（可选）
 	fmt.Println("\n📌 步骤 13: 获取页面 HTML...")
-	html, err := client.GetHTML(pageID)
+	html, err := page.GetHTML()
 	if err != nil {
 		log.Printf("❌ 获取 HTML 失败: %v\n", err)
 	} else {

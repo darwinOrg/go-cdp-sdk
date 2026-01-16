@@ -25,11 +25,11 @@ func main() {
 	fmt.Printf("✅ 已连接到浏览器: sessionId=%s\n", client.GetSessionID())
 
 	// 使用默认页面
-	pageID := "default"
+	page, _ := client.GetPage("default")
 
 	// 2. 导航到目标 URL
 	fmt.Printf("\n📌 步骤 2: 导航到 %s...\n", targetURL)
-	if err := client.Navigate(pageID, targetURL); err != nil {
+	if err := page.Navigate( targetURL); err != nil {
 		log.Printf("❌ 导航失败: %v\n", err)
 		return
 	}
@@ -42,7 +42,7 @@ func main() {
 
 	// 4. 获取页面标题
 	fmt.Println("\n📌 步骤 4: 获取页面标题...")
-	title, err := client.GetTitle(pageID)
+	title, err := page.GetTitle()
 	if err != nil {
 		log.Printf("❌ 获取标题失败: %v\n", err)
 	} else {
@@ -51,7 +51,7 @@ func main() {
 
 	// 5. 获取页面 URL
 	fmt.Println("\n📌 步骤 5: 获取页面 URL...")
-	url, err := client.GetURL(pageID)
+	url, err := page.GetURL()
 	if err != nil {
 		log.Printf("❌ 获取 URL 失败: %v\n", err)
 	} else {
@@ -60,7 +60,8 @@ func main() {
 
 	// 6. 检查页面标题元素
 	fmt.Println("\n📌 步骤 6: 检查页面标题元素...")
-	exists, err := client.ElementExists(pageID, "h1")
+	locator := page.Locator("h1")
+	exists, err := locator.Exists()
 	if err != nil {
 		log.Printf("❌ 检查元素失败: %v\n", err)
 	} else {
@@ -77,11 +78,13 @@ func main() {
 	}
 
 	for _, selector := range jobTitleSelectors {
-		exists, err := client.ElementExists(pageID, selector)
+		locator := page.Locator(selector)
+		exists, err := locator.Exists()
 		if err == nil && exists {
 			fmt.Printf("✅ 找到职位标题元素: %s\n", selector)
 			// 尝试获取文本
-			text, err := client.ElementText(pageID, selector)
+			locator := page.Locator(selector)
+			text, err := locator.Text()
 			if err == nil {
 				fmt.Printf("   职位标题: %s\n", text)
 			}
@@ -99,11 +102,13 @@ func main() {
 	}
 
 	for _, selector := range companySelectors {
-		exists, err := client.ElementExists(pageID, selector)
+		locator := page.Locator(selector)
+		exists, err := locator.Exists()
 		if err == nil && exists {
 			fmt.Printf("✅ 找到公司名称元素: %s\n", selector)
 			// 尝试获取文本
-			text, err := client.ElementText(pageID, selector)
+			locator := page.Locator(selector)
+			text, err := locator.Text()
 			if err == nil {
 				fmt.Printf("   公司名称: %s\n", text)
 			}
@@ -121,11 +126,13 @@ func main() {
 	}
 
 	for _, selector := range salarySelectors {
-		exists, err := client.ElementExists(pageID, selector)
+		locator := page.Locator(selector)
+		exists, err := locator.Exists()
 		if err == nil && exists {
 			fmt.Printf("✅ 找到薪资元素: %s\n", selector)
 			// 尝试获取文本
-			text, err := client.ElementText(pageID, selector)
+			locator := page.Locator(selector)
+			text, err := locator.Text()
 			if err == nil {
 				fmt.Printf("   薪资: %s\n", text)
 			}
@@ -135,7 +142,7 @@ func main() {
 
 	// 10. 获取页面 HTML（前 500 字符）
 	fmt.Println("\n📌 步骤 10: 获取页面 HTML（前 500 字符）...")
-	html, err := client.GetHTML(pageID)
+	html, err := page.GetHTML()
 	if err != nil {
 		log.Printf("❌ 获取 HTML 失败: %v\n", err)
 	} else {
@@ -148,7 +155,7 @@ func main() {
 
 	// 11. 截图
 	fmt.Println("\n📌 步骤 11: 截图...")
-	screenshotData, err := client.Screenshot(pageID, "png")
+	screenshotData, err := page.Screenshot( "png")
 	if err != nil {
 		log.Printf("❌ 截图失败: %v\n", err)
 	} else {
