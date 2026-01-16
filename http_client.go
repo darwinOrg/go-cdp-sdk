@@ -661,7 +661,11 @@ func (hc *HTTPClient) GetSessionID() string {
 
 // NewPage 创建新页面
 func (hc *HTTPClient) NewPage() (*Page, error) {
-	resp, err := hc.doRequest("POST", "/api/page/new", nil)
+	body := map[string]any{
+		"sessionId": hc.sessionID,
+	}
+
+	resp, err := hc.doRequest("POST", "/api/page/new", body)
 	if err != nil {
 		return nil, err
 	}
