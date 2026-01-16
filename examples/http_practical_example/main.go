@@ -10,7 +10,7 @@ import (
 
 func main() {
 	// 创建 HTTP 客户端
-	client := cdpsdk.NewHTTPClient("http://localhost:3000")
+	client := cdpsdk.NewHTTPClient("http://localhost:3000", fmt.Sprintf("sessionId-%d", time.Now().UnixMilli()))
 
 	// 连接到现有浏览器（9222 端口）
 	fmt.Println("🚀 开始自动化流程...")
@@ -20,7 +20,7 @@ func main() {
 	}
 	fmt.Println("✅ 已连接到浏览器")
 
-	page, _ := client.GetPage("default")
+	page, _ := client.GetDefaultPage()
 
 	// 导航到百度
 	fmt.Println("\n📌 步骤 2: 导航到百度首页...")

@@ -10,7 +10,7 @@ import (
 
 func main() {
 	// 创建 HTTP 客户端
-	client := cdpsdk.NewHTTPClient("http://localhost:3000")
+	client := cdpsdk.NewHTTPClient("http://localhost:3000", fmt.Sprintf("sessionId-%d", time.Now().UnixMilli()))
 
 	// 目标 URL
 	targetURL := "https://www.zhipin.com/gongsi/job/5d627415a46b4a750nJ9.html?ka=company-jobs"
@@ -25,7 +25,7 @@ func main() {
 	fmt.Printf("✅ 已连接到浏览器: sessionId=%s\n", client.GetSessionID())
 
 	// 使用默认页面
-	page, _ := client.GetPage("default")
+	page, _ := client.GetDefaultPage()
 
 	// 2. 导航到目标 URL
 	fmt.Printf("\n📌 步骤 2: 导航到 %s...\n", targetURL)

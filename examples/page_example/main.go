@@ -3,13 +3,14 @@ package main
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/darwinOrg/go-cdp-sdk"
 )
 
 func main() {
 	// 创建 HTTP 客户端
-	client := cdpsdk.NewHTTPClient("http://localhost:3000")
+	client := cdpsdk.NewHTTPClient("http://localhost:3000", fmt.Sprintf("sessionId-%d", time.Now().UnixMilli()))
 
 	// 连接到浏览器
 	fmt.Println("🚀 测试 Page 结构体功能...")

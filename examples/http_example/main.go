@@ -3,13 +3,14 @@ package main
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/darwinOrg/go-cdp-sdk"
 )
 
 func main() {
 	// 创建 HTTP 客户端
-	client := cdpsdk.NewHTTPClient("http://localhost:3000")
+	client := cdpsdk.NewHTTPClient("http://localhost:3000", fmt.Sprintf("sessionId-%d", time.Now().UnixMilli()))
 
 	// 连接到现有浏览器（9222 端口）
 	fmt.Println("📌 连接到现有浏览器（端口 9222）...")
@@ -20,7 +21,7 @@ func main() {
 
 	// 创建新页面（可选，也可以使用默认页面）
 	fmt.Println("\n📌 创建新页面...")
-	page, err := client.NewPage()
+	page, err := client.NewPage(fmt.Sprintf("pageId-%d", time.Now().UnixMilli()))
 	if err != nil {
 		log.Printf("❌ 创建页面失败: %v\n", err)
 		return

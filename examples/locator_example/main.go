@@ -3,13 +3,14 @@ package main
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/darwinOrg/go-cdp-sdk"
 )
 
 func main() {
 	// 创建 HTTP 客户端
-	client := cdpsdk.NewHTTPClient("http://localhost:3000")
+	client := cdpsdk.NewHTTPClient("http://localhost:3000", fmt.Sprintf("sessionId-%d", time.Now().UnixMilli()))
 
 	// 连接到浏览器
 	fmt.Println("🚀 测试 Locator 功能...")
@@ -18,7 +19,7 @@ func main() {
 	}
 	defer client.StopBrowser()
 
-	page, _ := client.GetPage("default")
+	page, _ := client.GetDefaultPage()
 
 	// 导航到测试页面
 	fmt.Println("\n📌 导航到示例页面...")
