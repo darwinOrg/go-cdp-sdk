@@ -661,19 +661,19 @@ func (hc *HTTPClient) GetSessionID() string {
 }
 
 // NewPage 创建新页面
-func (hc *HTTPClient) NewPage() (string, error) {
+func (hc *HTTPClient) NewPage() (*Page, error) {
 	resp, err := hc.doRequest("POST", "/api/page/new", nil)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	// 从响应中获取 pageId
 	if pageID, ok := resp.Data["pageId"].(string); ok {
 		hc.pages = append(hc.pages, pageID)
-		return pageID, nil
-	} else {
-		return "", fmt.Errorf("pageId not found in response")
+		return NewPage(hc, pageID), nil
 	}
+
+	return nil, fmt.Errorf("pageId not found in response")
 }
 
 // GetDefaultPage 获取默认页面实例（第一个页面）

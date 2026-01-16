@@ -20,7 +20,7 @@ func main() {
 
 	// 创建新页面（可选，也可以使用默认页面）
 	fmt.Println("\n📌 创建新页面...")
-	pageID, err := client.NewPage()
+	page, err := client.NewPage()
 	if err != nil {
 		log.Printf("❌ 创建页面失败: %v\n", err)
 		return
@@ -28,7 +28,7 @@ func main() {
 
 	// 导航到 example.com
 	fmt.Println("\n📌 导航到 example.com...")
-	if err := client.Navigate(pageID, "https://example.com"); err != nil {
+	if err := page.Navigate("https://example.com"); err != nil {
 		log.Printf("❌ 导航失败: %v\n", err)
 	} else {
 		fmt.Println("✅ 导航成功")
@@ -36,7 +36,7 @@ func main() {
 
 	// 等待页面加载完成
 	fmt.Println("\n📌 等待页面加载完成...")
-	if err := client.WaitForLoadStateLoad(pageID); err != nil {
+	if err := page.WaitForLoadStateLoad(); err != nil {
 		log.Printf("❌ 等待加载失败: %v\n", err)
 	} else {
 		fmt.Println("✅ 页面加载完成")
@@ -44,7 +44,7 @@ func main() {
 
 	// 获取页面标题
 	fmt.Println("\n📌 获取页面标题...")
-	title, err := client.GetTitle(pageID)
+	title, err := page.GetTitle()
 	if err != nil {
 		log.Printf("❌ 获取标题失败: %v\n", err)
 	} else {
@@ -53,7 +53,7 @@ func main() {
 
 	// 获取页面 URL
 	fmt.Println("\n📌 获取页面 URL...")
-	url, err := client.GetURL(pageID)
+	url, err := page.GetURL()
 	if err != nil {
 		log.Printf("❌ 获取 URL 失败: %v\n", err)
 	} else {
@@ -62,7 +62,8 @@ func main() {
 
 	// 检查元素是否存在
 	fmt.Println("\n📌 检查 h1 元素是否存在...")
-	exists, err := client.ElementExists(pageID, "h1")
+	locator := page.Locator("h1")
+	exists, err := locator.Exists()
 	if err != nil {
 		log.Printf("❌ 检查元素失败: %v\n", err)
 	} else {
@@ -71,7 +72,7 @@ func main() {
 
 	// 获取元素文本
 	fmt.Println("\n📌 获取 h1 元素的文本...")
-	text, err := client.ElementText(pageID, "h1")
+	text, err := locator.Text()
 	if err != nil {
 		log.Printf("❌ 获取元素文本失败: %v\n", err)
 	} else {
@@ -80,7 +81,7 @@ func main() {
 
 	// 截图
 	fmt.Println("\n📌 截图...")
-	screenshotData, err := client.Screenshot(pageID, "png")
+	screenshotData, err := page.Screenshot("png")
 	if err != nil {
 		log.Printf("❌ 截图失败: %v\n", err)
 	} else {
