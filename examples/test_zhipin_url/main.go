@@ -10,26 +10,27 @@ import (
 
 func main() {
 	// 创建 HTTP 客户端
-	client := cdpsdk.NewHTTPClient("http://localhost:3000", fmt.Sprintf("sessionId-%d", time.Now().UnixMilli()))
+	sessionId := "test-zhipin-url-session"
+	client := cdpsdk.NewHTTPClient("http://localhost:3000", sessionId)
 
 	// 目标 URL
 	targetURL := "https://www.zhipin.com/gongsi/job/5d627415a46b4a750nJ9.html?ka=company-jobs"
 
 	fmt.Println("🚀 开始测试 BOSS 直聘 URL...")
 
-	// 1. 连接到浏览器（9222 端口）
-	fmt.Println("\n📌 步骤 1: 连接到浏览器（端口 9222）...")
-	if err := client.ConnectBrowser(9222); err != nil {
-		log.Fatalf("❌ 连接浏览器失败: %v", err)
+	// 1. 启动浏览器
+	fmt.Println("\n📌 步骤 1: 启动浏览器...")
+	if err := client.StartBrowser(false); err != nil {
+		log.Fatalf("❌ 启动浏览器失败: %v", err)
 	}
-	fmt.Printf("✅ 已连接到浏览器: sessionId=%s\n", client.GetSessionID())
+	fmt.Println("✅ 浏览器已启动")
 
 	// 使用默认页面
-	page, _ := client.GetDefaultPage()
+	page := cdpsdk.NewPage(client)
 
 	// 2. 导航到目标 URL
 	fmt.Printf("\n📌 步骤 2: 导航到 %s...\n", targetURL)
-	if err := page.Navigate(targetURL); err != nil {
+	if err := page.NavigateWithLoadedState(targetURL); err != nil {
 		log.Printf("❌ 导航失败: %v\n", err)
 		return
 	}
@@ -60,7 +61,7 @@ func main() {
 
 	// 6. 检查页面标题元素
 	fmt.Println("\n📌 步骤 6: 检查页面标题元素...")
-	locator := page.Locator("h1")
+	locator := client.Locator("h1")
 	exists, err := locator.Exists()
 	if err != nil {
 		log.Printf("❌ 检查元素失败: %v\n", err)
@@ -78,12 +79,12 @@ func main() {
 	}
 
 	for _, selector := range jobTitleSelectors {
-		locator := page.Locator(selector)
+		locator := client.Locator(selector)
 		exists, err := locator.Exists()
 		if err == nil && exists {
 			fmt.Printf("✅ 找到职位标题元素: %s\n", selector)
 			// 尝试获取文本
-			locator := page.Locator(selector)
+			locator := client.Locator(selector)
 			text, err := locator.Text()
 			if err == nil {
 				fmt.Printf("   职位标题: %s\n", text)
@@ -102,12 +103,12 @@ func main() {
 	}
 
 	for _, selector := range companySelectors {
-		locator := page.Locator(selector)
+		locator := client.Locator(selector)
 		exists, err := locator.Exists()
 		if err == nil && exists {
 			fmt.Printf("✅ 找到公司名称元素: %s\n", selector)
 			// 尝试获取文本
-			locator := page.Locator(selector)
+			locator := client.Locator(selector)
 			text, err := locator.Text()
 			if err == nil {
 				fmt.Printf("   公司名称: %s\n", text)
@@ -126,12 +127,12 @@ func main() {
 	}
 
 	for _, selector := range salarySelectors {
-		locator := page.Locator(selector)
+		locator := client.Locator(selector)
 		exists, err := locator.Exists()
 		if err == nil && exists {
 			fmt.Printf("✅ 找到薪资元素: %s\n", selector)
 			// 尝试获取文本
-			locator := page.Locator(selector)
+			locator := client.Locator(selector)
 			text, err := locator.Text()
 			if err == nil {
 				fmt.Printf("   薪资: %s\n", text)

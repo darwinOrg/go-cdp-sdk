@@ -3,29 +3,24 @@ package main
 import (
 	"fmt"
 	"log"
-	"time"
 
 	"github.com/darwinOrg/go-cdp-sdk"
 )
 
 func main() {
 	// 创建 HTTP 客户端
-	client := cdpsdk.NewHTTPClient("http://localhost:3000", fmt.Sprintf("sessionId-%d", time.Now().UnixMilli()))
+	sessionId := "http-example-session"
+	client := cdpsdk.NewHTTPClient("http://localhost:3000", sessionId)
 
-	// 连接到现有浏览器（9222 端口）
-	fmt.Println("📌 连接到现有浏览器（端口 9222）...")
-	if err := client.ConnectBrowser(9222); err != nil {
-		log.Fatalf("❌ 连接浏览器失败: %v", err)
+	// 启动浏览器
+	fmt.Println("📌 启动浏览器...")
+	if err := client.StartBrowser(false); err != nil {
+		log.Fatalf("❌ 启动浏览器失败: %v", err)
 	}
-	fmt.Printf("✅ 已连接到浏览器: sessionId=%s\n", client.GetSessionID())
+	fmt.Println("✅ 浏览器已启动")
 
-	// 创建新页面（可选，也可以使用默认页面）
-	fmt.Println("\n📌 创建新页面...")
-	page, err := client.NewPage(fmt.Sprintf("pageId-%d", time.Now().UnixMilli()))
-	if err != nil {
-		log.Printf("❌ 创建页面失败: %v\n", err)
-		return
-	}
+	// 创建页面（使用默认页面）
+	page := cdpsdk.NewPage(client)
 
 	// 导航到 example.com
 	fmt.Println("\n📌 导航到 example.com...")
@@ -63,7 +58,7 @@ func main() {
 
 	// 检查元素是否存在
 	fmt.Println("\n📌 检查 h1 元素是否存在...")
-	locator := page.Locator("h1")
+	locator := client.Locator("h1")
 	exists, err := locator.Exists()
 	if err != nil {
 		log.Printf("❌ 检查元素失败: %v\n", err)

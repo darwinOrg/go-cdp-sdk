@@ -3,27 +3,24 @@ package main
 import (
 	"fmt"
 	"log"
-	"time"
 
 	"github.com/darwinOrg/go-cdp-sdk"
 )
 
 func main() {
 	// 创建 HTTP 客户端
-	client := cdpsdk.NewHTTPClient("http://localhost:3000", fmt.Sprintf("sessionId-%d", time.Now().UnixMilli()))
+	sessionId := "page-example-session"
+	client := cdpsdk.NewHTTPClient("http://localhost:3000", sessionId)
 
-	// 连接到浏览器
+	// 启动浏览器
 	fmt.Println("🚀 测试 Page 结构体功能...")
-	if err := client.ConnectBrowser(9222); err != nil {
-		log.Fatalf("❌ 连接浏览器失败: %v", err)
+	if err := client.StartBrowser(false); err != nil {
+		log.Fatalf("❌ 启动浏览器失败: %v", err)
 	}
 	defer client.StopBrowser()
 
 	// 创建页面实例
-	page, err := client.GetDefaultPage()
-	if err != nil {
-		log.Fatal(err)
-	}
+	page := cdpsdk.NewPage(client)
 
 	// 测试页面操作
 	fmt.Println("\n📌 测试页面操作...")
@@ -55,7 +52,7 @@ func main() {
 
 	// 4. 使用 Locator
 	fmt.Println("\n4️⃣ 使用 Locator 操作元素...")
-	h1Locator := page.Locator("h1")
+	h1Locator := client.Locator("h1")
 	h1Text, err := h1Locator.Text()
 	if err != nil {
 		log.Printf("❌ 获取文本失败: %v\n", err)
@@ -63,9 +60,9 @@ func main() {
 		fmt.Printf("✅ h1 文本: %s\n", h1Text)
 	}
 
-	// 5. 多级 Locator + 链式操作
-	fmt.Println("\n5️⃣ 多级 Locator + 链式操作...")
-	linkLocator := page.Locator("div").Locator("p").Locator("a")
+	// 5. 多级 Locator
+	fmt.Println("\n5️⃣ 多级 Locator...")
+	linkLocator := client.Locator("div").Locator("p").Locator("a")
 	exists, err := linkLocator.Exists()
 	if err != nil {
 		log.Printf("❌ 检查存在失败: %v\n", err)

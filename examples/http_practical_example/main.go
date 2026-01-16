@@ -10,17 +10,18 @@ import (
 
 func main() {
 	// 创建 HTTP 客户端
-	client := cdpsdk.NewHTTPClient("http://localhost:3000", fmt.Sprintf("sessionId-%d", time.Now().UnixMilli()))
+	sessionId := "http-practical-example-session"
+	client := cdpsdk.NewHTTPClient("http://localhost:3000", sessionId)
 
-	// 连接到现有浏览器（9222 端口）
+	// 启动浏览器
 	fmt.Println("🚀 开始自动化流程...")
-	fmt.Println("📌 步骤 1: 连接到浏览器（端口 9222）...")
-	if err := client.ConnectBrowser(9222); err != nil {
-		log.Fatalf("❌ 连接浏览器失败: %v", err)
+	fmt.Println("📌 步骤 1: 启动浏览器...")
+	if err := client.StartBrowser(false); err != nil {
+		log.Fatalf("❌ 启动浏览器失败: %v", err)
 	}
-	fmt.Println("✅ 已连接到浏览器")
+	fmt.Println("✅ 浏览器已启动")
 
-	page, _ := client.GetDefaultPage()
+	page := cdpsdk.NewPage(client)
 
 	// 导航到百度
 	fmt.Println("\n📌 步骤 2: 导航到百度首页...")
@@ -45,7 +46,7 @@ func main() {
 
 	// 检查搜索框是否存在
 	fmt.Println("\n📌 步骤 5: 检查搜索框是否存在...")
-	locator := page.Locator("#kw")
+	locator := client.Locator("#kw")
 	exists, err := locator.Exists()
 	if err != nil {
 		log.Printf("❌ 检查元素失败: %v\n", err)
@@ -57,7 +58,7 @@ func main() {
 
 	// 在搜索框中输入文本
 	fmt.Println("\n📌 步骤 6: 在搜索框中输入文本...")
-	if err := page.Locator("#kw").SetValue("TypeScript CDP 自动化"); err != nil {
+	if err := client.Locator("#kw").SetValue("TypeScript CDP 自动化"); err != nil {
 		log.Printf("❌ 输入文本失败: %v\n", err)
 	} else {
 		fmt.Println("✅ 输入成功")
@@ -65,7 +66,7 @@ func main() {
 
 	// 点击搜索按钮
 	fmt.Println("\n📌 步骤 7: 点击搜索按钮...")
-	if err := page.Locator("#su").Click(); err != nil {
+	if err := client.Locator("#su").Click(); err != nil {
 		log.Printf("❌ 点击失败: %v\n", err)
 	} else {
 		fmt.Println("✅ 点击成功")
@@ -77,7 +78,7 @@ func main() {
 
 	// 获取搜索结果数量
 	fmt.Println("\n📌 步骤 10: 获取搜索结果数量...")
-	locator = page.Locator(".result")
+	locator = client.Locator(".result")
 	var count int
 	count, err = locator.Count()
 	if err != nil {
@@ -88,7 +89,7 @@ func main() {
 
 	// 获取所有搜索结果的标题
 	fmt.Println("\n📌 步骤 11: 获取搜索结果标题...")
-	locator = page.Locator(".result h3 a")
+	locator = client.Locator(".result h3 a")
 	var texts []string
 	texts, err = locator.AllTexts()
 	if err != nil {
