@@ -14,6 +14,7 @@ type HTTPClient struct {
 	baseURL    string
 	sessionID  string
 	httpClient *http.Client
+	pages      []string // 页面ID列表
 }
 
 // HTTPResponse HTTP 响应
@@ -32,6 +33,7 @@ func NewHTTPClient(baseURL, sessionID string) *HTTPClient {
 		httpClient: &http.Client{
 			Timeout: 5 * time.Minute, // 增加超时时间到 5 分钟
 		},
+		pages: []string{}, // 初始化页面列表
 	}
 }
 
@@ -137,6 +139,16 @@ func (hc *HTTPClient) StartBrowser(headless bool) error {
 		return fmt.Errorf("sessionId not found in response")
 	}
 
+	// 从响应中获取页面列表
+	if pages, ok := resp.Data["pages"].([]any); ok {
+		hc.pages = make([]string, 0, len(pages))
+		for _, p := range pages {
+			if pageID, ok := p.(string); ok {
+				hc.pages = append(hc.pages, pageID)
+			}
+		}
+	}
+
 	return nil
 }
 
@@ -156,6 +168,16 @@ func (hc *HTTPClient) ConnectBrowser(port int) error {
 		hc.sessionID = sessionId
 	} else {
 		return fmt.Errorf("sessionId not found in response")
+	}
+
+	// 从响应中获取页面列表
+	if pages, ok := resp.Data["pages"].([]any); ok {
+		hc.pages = make([]string, 0, len(pages))
+		for _, p := range pages {
+			if pageID, ok := p.(string); ok {
+				hc.pages = append(hc.pages, pageID)
+			}
+		}
 	}
 
 	return nil
@@ -638,14 +660,43 @@ func (hc *HTTPClient) GetSessionID() string {
 	return hc.sessionID
 }
 
-// NewPage 创建页面实例
-func (hc *HTTPClient) NewPage(pageID string) *Page {
-	return NewPage(hc, pageID)
+// NewPage 创建新页面
+func (hc *HTTPClient) NewPage() (string, error) {
+	resp, err := hc.doRequest("POST", "/api/page/new", nil)
+	if err != nil {
+		return "", err
+	}
+
+	// 从响应中获取 pageId
+	if pageID, ok := resp.Data["pageId"].(string); ok {
+		hc.pages = append(hc.pages, pageID)
+		return pageID, nil
+	} else {
+		return "", fmt.Errorf("pageId not found in response")
+	}
 }
 
-// GetDefaultPage 获取默认页面实例
-func (hc *HTTPClient) GetDefaultPage() *Page {
-	return NewPage(hc, "default")
+// GetDefaultPage 获取默认页面实例（第一个页面）
+func (hc *HTTPClient) GetDefaultPage() (*Page, error) {
+	if len(hc.pages) == 0 {
+		return nil, fmt.Errorf("no pages available")
+	}
+	return NewPage(hc, hc.pages[0]), nil
+}
+
+// GetPage 根据页面ID获取页面实例
+func (hc *HTTPClient) GetPage(pageID string) (*Page, error) {
+	for _, pid := range hc.pages {
+		if pid == pageID {
+			return NewPage(hc, pageID), nil
+		}
+	}
+	return nil, fmt.Errorf("page not found: %s", pageID)
+}
+
+// GetPages 获取所有页面ID
+func (hc *HTTPClient) GetPages() []string {
+	return hc.pages
 }
 
 // SetTimeout 设置请求超时时间

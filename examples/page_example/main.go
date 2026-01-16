@@ -19,7 +19,10 @@ func main() {
 	defer client.StopBrowser()
 
 	// 创建页面实例
-	page := client.NewPage("default")
+	page, err := client.GetDefaultPage()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// 测试页面操作
 	fmt.Println("\n📌 测试页面操作...")

@@ -20,11 +20,10 @@ func main() {
 
 	// 创建新页面（可选，也可以使用默认页面）
 	fmt.Println("\n📌 创建新页面...")
-	pageID := "page-1"
-	if err := client.NewPage(pageID); err != nil {
+	pageID, err := client.NewPage()
+	if err != nil {
 		log.Printf("❌ 创建页面失败: %v\n", err)
-	} else {
-		fmt.Printf("✅ 页面已创建: %s\n", pageID)
+		return
 	}
 
 	// 导航到 example.com
