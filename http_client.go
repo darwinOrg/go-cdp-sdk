@@ -24,11 +24,8 @@ type HTTPResponse struct {
 }
 
 // NewHTTPClient 创建新的 HTTP 客户端
+// sessionID 可以为空，会在调用 StartBrowser 或 ConnectBrowser 时自动生成
 func NewHTTPClient(baseURL, sessionID string) *HTTPClient {
-	if sessionID == "" {
-		sessionID = fmt.Sprintf("session-%d", time.Now().UnixNano())
-	}
-
 	return &HTTPClient{
 		baseURL:   baseURL,
 		sessionID: sessionID,
@@ -123,26 +120,45 @@ func (hc *HTTPClient) doRequestBinary(method, endpoint string, body any) ([]byte
 
 // StartBrowser 启动浏览器
 func (hc *HTTPClient) StartBrowser(headless bool) error {
-	body := map[string]any{
-		"sessionId": hc.sessionID,
-	}
+	body := map[string]any{}
 	if headless {
 		body["headless"] = "new"
 	}
 
-	_, err := hc.doRequest("POST", "/api/browser/start", body)
-	return err
+	resp, err := hc.doRequest("POST", "/api/browser/start", body)
+	if err != nil {
+		return err
+	}
+
+	// 从响应中获取 sessionId
+	if sessionId, ok := resp.Data["sessionId"].(string); ok {
+		hc.sessionID = sessionId
+	} else {
+		return fmt.Errorf("sessionId not found in response")
+	}
+
+	return nil
 }
 
 // ConnectBrowser 连接到现有浏览器
 func (hc *HTTPClient) ConnectBrowser(port int) error {
 	body := map[string]any{
-		"sessionId": hc.sessionID,
-		"port":      port,
+		"port": port,
 	}
 
-	_, err := hc.doRequest("POST", "/api/browser/connect", body)
-	return err
+	resp, err := hc.doRequest("POST", "/api/browser/connect", body)
+	if err != nil {
+		return err
+	}
+
+	// 从响应中获取 sessionId
+	if sessionId, ok := resp.Data["sessionId"].(string); ok {
+		hc.sessionID = sessionId
+	} else {
+		return fmt.Errorf("sessionId not found in response")
+	}
+
+	return nil
 }
 
 // StopBrowser 停止浏览器
