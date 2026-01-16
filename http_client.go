@@ -33,7 +33,7 @@ func NewHTTPClient(baseURL, sessionID string) *HTTPClient {
 		baseURL:   baseURL,
 		sessionID: sessionID,
 		httpClient: &http.Client{
-			Timeout: 30 * time.Second,
+			Timeout: 5 * time.Minute, // 增加超时时间到 5 分钟
 		},
 	}
 }
