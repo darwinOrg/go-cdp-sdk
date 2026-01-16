@@ -7,20 +7,20 @@ import (
 // Page 页面结构体，封装页面相关操作
 type Page struct {
 	client *HTTPClient
-	pageID string
+	pageId string
 }
 
 // NewPage 创建页面实例
-func NewPage(client *HTTPClient, pageID string) *Page {
+func NewPage(client *HTTPClient, pageId string) *Page {
 	return &Page{
 		client: client,
-		pageID: pageID,
+		pageId: pageId,
 	}
 }
 
 // GetPageID 获取页面ID
 func (p *Page) GetPageID() string {
-	return p.pageID
+	return p.pageId
 }
 
 // GetClient 获取 HTTP 客户端

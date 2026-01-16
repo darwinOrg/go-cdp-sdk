@@ -142,8 +142,8 @@ func (hc *HTTPClient) StartBrowser(headless bool) error {
 	if pages, ok := resp.Data["pages"].([]any); ok {
 		hc.pages = make([]string, 0, len(pages))
 		for _, p := range pages {
-			if pageID, ok := p.(string); ok {
-				hc.pages = append(hc.pages, pageID)
+			if pageId, ok := p.(string); ok {
+				hc.pages = append(hc.pages, pageId)
 			}
 		}
 	}
@@ -172,8 +172,8 @@ func (hc *HTTPClient) ConnectBrowser(port int) error {
 	if pages, ok := resp.Data["pages"].([]any); ok {
 		hc.pages = make([]string, 0, len(pages))
 		for _, p := range pages {
-			if pageID, ok := p.(string); ok {
-				hc.pages = append(hc.pages, pageID)
+			if pageId, ok := p.(string); ok {
+				hc.pages = append(hc.pages, pageId)
 			}
 		}
 	}
@@ -195,7 +195,7 @@ func (hc *HTTPClient) StopBrowser() error {
 func (hc *HTTPClient) ClosePage(page *Page) error {
 	body := map[string]any{
 		"sessionId": hc.sessionId,
-		"pageId":    page.pageID,
+		"pageId":    page.pageId,
 	}
 
 	_, err := hc.doRequest("POST", "/api/page/close", body)
@@ -206,7 +206,7 @@ func (hc *HTTPClient) ClosePage(page *Page) error {
 func (hc *HTTPClient) Navigate(page *Page, url string) error {
 	body := map[string]any{
 		"sessionId": hc.sessionId,
-		"pageId":    page.pageID,
+		"pageId":    page.pageId,
 		"url":       url,
 	}
 
@@ -218,7 +218,7 @@ func (hc *HTTPClient) Navigate(page *Page, url string) error {
 func (hc *HTTPClient) NavigateWithLoadedState(page *Page, url string) error {
 	body := map[string]any{
 		"sessionId": hc.sessionId,
-		"pageId":    page.pageID,
+		"pageId":    page.pageId,
 		"url":       url,
 	}
 
@@ -230,7 +230,7 @@ func (hc *HTTPClient) NavigateWithLoadedState(page *Page, url string) error {
 func (hc *HTTPClient) Reload(page *Page) error {
 	body := map[string]any{
 		"sessionId": hc.sessionId,
-		"pageId":    page.pageID,
+		"pageId":    page.pageId,
 	}
 
 	_, err := hc.doRequest("POST", "/api/page/reload", body)
@@ -241,7 +241,7 @@ func (hc *HTTPClient) Reload(page *Page) error {
 func (hc *HTTPClient) ReloadWithLoadedState(page *Page) error {
 	body := map[string]any{
 		"sessionId": hc.sessionId,
-		"pageId":    page.pageID,
+		"pageId":    page.pageId,
 	}
 
 	_, err := hc.doRequest("POST", "/api/page/reload-with-loaded-state", body)
@@ -252,7 +252,7 @@ func (hc *HTTPClient) ReloadWithLoadedState(page *Page) error {
 func (hc *HTTPClient) ExecuteScript(page *Page, script string) (any, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionId,
-		"pageId":    page.pageID,
+		"pageId":    page.pageId,
 		"script":    script,
 	}
 
@@ -267,8 +267,8 @@ func (hc *HTTPClient) ExecuteScript(page *Page, script string) (any, error) {
 // GetTitle 获取页面标题
 func (hc *HTTPClient) GetTitle(page *Page) (string, error) {
 	endpoint := fmt.Sprintf("/api/page/title?sessionId=%s", hc.sessionId)
-	if page.pageID != "" {
-		endpoint += fmt.Sprintf("&pageId=%s", page.pageID)
+	if page.pageId != "" {
+		endpoint += fmt.Sprintf("&pageId=%s", page.pageId)
 	}
 
 	resp, err := hc.doRequest("GET", endpoint, nil)
@@ -286,8 +286,8 @@ func (hc *HTTPClient) GetTitle(page *Page) (string, error) {
 // GetURL 获取页面 URL
 func (hc *HTTPClient) GetURL(page *Page) (string, error) {
 	endpoint := fmt.Sprintf("/api/page/url?sessionId=%s", hc.sessionId)
-	if page.pageID != "" {
-		endpoint += fmt.Sprintf("&pageId=%s", page.pageID)
+	if page.pageId != "" {
+		endpoint += fmt.Sprintf("&pageId=%s", page.pageId)
 	}
 
 	resp, err := hc.doRequest("GET", endpoint, nil)
@@ -305,8 +305,8 @@ func (hc *HTTPClient) GetURL(page *Page) (string, error) {
 // GetHTML 获取页面 HTML
 func (hc *HTTPClient) GetHTML(page *Page) (string, error) {
 	endpoint := fmt.Sprintf("/api/page/html?sessionId=%s", hc.sessionId)
-	if page.pageID != "" {
-		endpoint += fmt.Sprintf("&pageId=%s", page.pageID)
+	if page.pageId != "" {
+		endpoint += fmt.Sprintf("&pageId=%s", page.pageId)
 	}
 
 	resp, err := hc.doRequest("GET", endpoint, nil)
@@ -325,7 +325,7 @@ func (hc *HTTPClient) GetHTML(page *Page) (string, error) {
 func (hc *HTTPClient) Screenshot(page *Page, format string) ([]byte, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionId,
-		"pageId":    page.pageID,
+		"pageId":    page.pageId,
 		"format":    format,
 	}
 
@@ -336,7 +336,7 @@ func (hc *HTTPClient) Screenshot(page *Page, format string) ([]byte, error) {
 func (hc *HTTPClient) WaitForLoadStateLoad(page *Page) error {
 	body := map[string]any{
 		"sessionId": hc.sessionId,
-		"pageId":    page.pageID,
+		"pageId":    page.pageId,
 	}
 
 	_, err := hc.doRequest("POST", "/api/page/wait-for-load-state-load", body)
@@ -347,7 +347,7 @@ func (hc *HTTPClient) WaitForLoadStateLoad(page *Page) error {
 func (hc *HTTPClient) WaitForDomContentLoaded(page *Page) error {
 	body := map[string]any{
 		"sessionId": hc.sessionId,
-		"pageId":    page.pageID,
+		"pageId":    page.pageId,
 	}
 
 	_, err := hc.doRequest("POST", "/api/page/wait-for-dom-content-loaded", body)
@@ -358,7 +358,7 @@ func (hc *HTTPClient) WaitForDomContentLoaded(page *Page) error {
 func (hc *HTTPClient) WaitForSelectorVisible(page *Page, selector string) error {
 	body := map[string]any{
 		"sessionId": hc.sessionId,
-		"pageId":    page.pageID,
+		"pageId":    page.pageId,
 		"selector":  selector,
 	}
 
@@ -370,7 +370,7 @@ func (hc *HTTPClient) WaitForSelectorVisible(page *Page, selector string) error 
 func (hc *HTTPClient) ExpectResponseText(page *Page, urlOrPredicate, callback string) (string, error) {
 	body := map[string]any{
 		"sessionId":      hc.sessionId,
-		"pageId":         page.pageID,
+		"pageId":         page.pageId,
 		"urlOrPredicate": urlOrPredicate,
 		"callback":       callback,
 	}
@@ -391,7 +391,7 @@ func (hc *HTTPClient) ExpectResponseText(page *Page, urlOrPredicate, callback st
 func (hc *HTTPClient) MustInnerText(page *Page, selector string) (string, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionId,
-		"pageId":    page.pageID,
+		"pageId":    page.pageId,
 		"selector":  selector,
 	}
 
@@ -411,7 +411,7 @@ func (hc *HTTPClient) MustInnerText(page *Page, selector string) (string, error)
 func (hc *HTTPClient) MustTextContent(page *Page, selector string) (string, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionId,
-		"pageId":    page.pageID,
+		"pageId":    page.pageId,
 		"selector":  selector,
 	}
 
@@ -431,7 +431,7 @@ func (hc *HTTPClient) MustTextContent(page *Page, selector string) (string, erro
 func (hc *HTTPClient) Release(page *Page) error {
 	body := map[string]any{
 		"sessionId": hc.sessionId,
-		"pageId":    page.pageID,
+		"pageId":    page.pageId,
 	}
 
 	_, err := hc.doRequest("POST", "/api/page/release", body)
@@ -442,7 +442,7 @@ func (hc *HTTPClient) Release(page *Page) error {
 func (hc *HTTPClient) CloseAll(page *Page) error {
 	body := map[string]any{
 		"sessionId": hc.sessionId,
-		"pageId":    page.pageID,
+		"pageId":    page.pageId,
 	}
 
 	_, err := hc.doRequest("POST", "/api/page/close-all", body)
@@ -453,7 +453,7 @@ func (hc *HTTPClient) CloseAll(page *Page) error {
 func (hc *HTTPClient) ExpectExtPage(page *Page, callback string) (string, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionId,
-		"pageId":    page.pageID,
+		"pageId":    page.pageId,
 		"callback":  callback,
 	}
 
@@ -462,8 +462,8 @@ func (hc *HTTPClient) ExpectExtPage(page *Page, callback string) (string, error)
 		return "", err
 	}
 
-	if pageID, ok := resp.Data["pageId"].(string); ok {
-		return pageID, nil
+	if pageId, ok := resp.Data["pageId"].(string); ok {
+		return pageId, nil
 	}
 
 	return "", fmt.Errorf("pageId not found in response")
@@ -473,7 +473,7 @@ func (hc *HTTPClient) ExpectExtPage(page *Page, callback string) (string, error)
 func (hc *HTTPClient) ElementExists(page *Page, selector string) (bool, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionId,
-		"pageId":    page.pageID,
+		"pageId":    page.pageId,
 		"selector":  selector,
 	}
 
@@ -493,7 +493,7 @@ func (hc *HTTPClient) ElementExists(page *Page, selector string) (bool, error) {
 func (hc *HTTPClient) ElementText(page *Page, selector string) (string, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionId,
-		"pageId":    page.pageID,
+		"pageId":    page.pageId,
 		"selector":  selector,
 	}
 
@@ -513,7 +513,7 @@ func (hc *HTTPClient) ElementText(page *Page, selector string) (string, error) {
 func (hc *HTTPClient) ElementClick(page *Page, selector string) error {
 	body := map[string]any{
 		"sessionId": hc.sessionId,
-		"pageId":    page.pageID,
+		"pageId":    page.pageId,
 		"selector":  selector,
 	}
 
@@ -525,7 +525,7 @@ func (hc *HTTPClient) ElementClick(page *Page, selector string) error {
 func (hc *HTTPClient) ElementHover(page *Page, selector string) error {
 	body := map[string]any{
 		"sessionId": hc.sessionId,
-		"pageId":    page.pageID,
+		"pageId":    page.pageId,
 		"selector":  selector,
 	}
 
@@ -537,7 +537,7 @@ func (hc *HTTPClient) ElementHover(page *Page, selector string) error {
 func (hc *HTTPClient) ElementSetValue(page *Page, selector, value string) error {
 	body := map[string]any{
 		"sessionId": hc.sessionId,
-		"pageId":    page.pageID,
+		"pageId":    page.pageId,
 		"selector":  selector,
 		"value":     value,
 	}
@@ -550,7 +550,7 @@ func (hc *HTTPClient) ElementSetValue(page *Page, selector, value string) error 
 func (hc *HTTPClient) ElementWait(page *Page, selector string, timeout int) error {
 	body := map[string]any{
 		"sessionId": hc.sessionId,
-		"pageId":    page.pageID,
+		"pageId":    page.pageId,
 		"selector":  selector,
 		"timeout":   timeout,
 	}
@@ -563,7 +563,7 @@ func (hc *HTTPClient) ElementWait(page *Page, selector string, timeout int) erro
 func (hc *HTTPClient) ElementAttribute(page *Page, selector, attribute string) (string, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionId,
-		"pageId":    page.pageID,
+		"pageId":    page.pageId,
 		"selector":  selector,
 		"attribute": attribute,
 	}
@@ -584,7 +584,7 @@ func (hc *HTTPClient) ElementAttribute(page *Page, selector, attribute string) (
 func (hc *HTTPClient) ElementAllTexts(page *Page, selector string) ([]string, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionId,
-		"pageId":    page.pageID,
+		"pageId":    page.pageId,
 		"selector":  selector,
 	}
 
@@ -610,7 +610,7 @@ func (hc *HTTPClient) ElementAllTexts(page *Page, selector string) ([]string, er
 func (hc *HTTPClient) ElementAllAttributes(page *Page, selector, attribute string) ([]string, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionId,
-		"pageId":    page.pageID,
+		"pageId":    page.pageId,
 		"selector":  selector,
 		"attribute": attribute,
 	}
@@ -637,7 +637,7 @@ func (hc *HTTPClient) ElementAllAttributes(page *Page, selector, attribute strin
 func (hc *HTTPClient) ElementCount(page *Page, selector string) (int, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionId,
-		"pageId":    page.pageID,
+		"pageId":    page.pageId,
 		"selector":  selector,
 	}
 
@@ -659,10 +659,10 @@ func (hc *HTTPClient) GetSessionID() string {
 }
 
 // NewPage 创建新页面
-func (hc *HTTPClient) NewPage(pageID string) (*Page, error) {
+func (hc *HTTPClient) NewPage(pageId string) (*Page, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionId,
-		"pageID":    pageID,
+		"pageId":    pageId,
 	}
 
 	resp, err := hc.doRequest("POST", "/api/page/new", body)
@@ -672,11 +672,11 @@ func (hc *HTTPClient) NewPage(pageID string) (*Page, error) {
 
 	// 从响应中获取 pageId
 	if respPageID, ok := resp.Data["pageId"].(string); ok {
-		pageID = respPageID
-		hc.pages = append(hc.pages, pageID)
+		pageId = respPageID
+		hc.pages = append(hc.pages, pageId)
 	}
 
-	return NewPage(hc, pageID), nil
+	return NewPage(hc, pageId), nil
 }
 
 // GetDefaultPage 获取默认页面实例（第一个页面）
@@ -688,17 +688,17 @@ func (hc *HTTPClient) GetDefaultPage() (*Page, error) {
 }
 
 // GetPage 根据页面ID获取页面实例
-func (hc *HTTPClient) GetPage(pageID string) (*Page, error) {
-	if pageID == "" {
+func (hc *HTTPClient) GetPage(pageId string) (*Page, error) {
+	if pageId == "" {
 		return hc.GetDefaultPage()
 	}
 
 	for _, pid := range hc.pages {
-		if pid == pageID {
-			return NewPage(hc, pageID), nil
+		if pid == pageId {
+			return NewPage(hc, pageId), nil
 		}
 	}
-	return nil, fmt.Errorf("page not found: %s", pageID)
+	return nil, fmt.Errorf("page not found: %s", pageId)
 }
 
 // GetPages 获取所有页面ID
