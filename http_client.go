@@ -353,13 +353,13 @@ func (hc *HTTPClient) MustTextContent(selector string) (string, error) {
 	return "", fmt.Errorf("text not found in response")
 }
 
-// CloseAll 关闭所有页面
-func (hc *HTTPClient) CloseAll() error {
+// Close 关闭页面
+func (hc *HTTPClient) Close() error {
 	body := map[string]any{
 		"sessionId": hc.sessionId,
 	}
 
-	_, err := hc.doRequest("POST", "/api/page/close-all", body)
+	_, err := hc.doRequest("POST", "/api/page/close", body)
 	return err
 }
 
