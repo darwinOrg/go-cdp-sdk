@@ -139,6 +139,36 @@ func (hc *HTTPClient) StartBrowser(headless bool) error {
 	return nil
 }
 
+// Connect 连接到已存在的浏览器
+func (hc *HTTPClient) Connect(port int) error {
+	body := map[string]any{
+		"sessionId": hc.sessionId,
+		"port":      port,
+	}
+
+	resp, err := hc.doRequest("POST", "/api/browser/connect", body)
+	if err != nil {
+		return err
+	}
+
+	// 从响应中获取 sessionId
+	if sessionId, ok := resp.Data["sessionId"].(string); ok {
+		hc.sessionId = sessionId
+	}
+
+	return nil
+}
+
+// Disconnect 断开连接
+func (hc *HTTPClient) Disconnect() error {
+	body := map[string]any{
+		"sessionId": hc.sessionId,
+	}
+
+	_, err := hc.doRequest("POST", "/api/browser/disconnect", body)
+	return err
+}
+
 // StopBrowser 停止浏览器
 func (hc *HTTPClient) StopBrowser() error {
 	body := map[string]any{
