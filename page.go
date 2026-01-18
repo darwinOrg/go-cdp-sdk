@@ -107,9 +107,6 @@ func (p *Page) MustTextContent(selector string) (string, error) {
 }
 
 // Release 释放页面
-func (p *Page) Release() error {
-	return p.client.Release()
-}
 
 // CloseAll 关闭所有页面
 func (p *Page) CloseAll() error {

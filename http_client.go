@@ -353,16 +353,6 @@ func (hc *HTTPClient) MustTextContent(selector string) (string, error) {
 	return "", fmt.Errorf("text not found in response")
 }
 
-// Release 释放页面锁
-func (hc *HTTPClient) Release() error {
-	body := map[string]any{
-		"sessionId": hc.sessionId,
-	}
-
-	_, err := hc.doRequest("POST", "/api/page/release", body)
-	return err
-}
-
 // CloseAll 关闭所有页面
 func (hc *HTTPClient) CloseAll() error {
 	body := map[string]any{
