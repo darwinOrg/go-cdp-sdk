@@ -96,14 +96,14 @@ func (p *Page) ExpectResponseText(urlOrPredicate, callback string) (string, erro
 	return p.client.ExpectResponseText(urlOrPredicate, callback)
 }
 
-// MustInnerText 强制获取内部文本
-func (p *Page) MustInnerText(selector string) (string, error) {
-	return p.client.MustInnerText(selector)
+// InnerText 获取内部文本
+func (p *Page) InnerText(selector string) (string, error) {
+	return p.client.InnerText(selector)
 }
 
-// MustTextContent 强制获取文本内容
-func (p *Page) MustTextContent(selector string) (string, error) {
-	return p.client.MustTextContent(selector)
+// TextContent 获取文本内容
+func (p *Page) TextContent(selector string) (string, error) {
+	return p.client.TextContent(selector)
 }
 
 // Release 释放页面

@@ -315,14 +315,14 @@ func (hc *HTTPClient) ExpectResponseText(urlOrPredicate, callback string) (strin
 	return "", fmt.Errorf("text not found in response")
 }
 
-// MustInnerText 必须获取内部文本
-func (hc *HTTPClient) MustInnerText(selector string) (string, error) {
+// InnerText 获取内部文本
+func (hc *HTTPClient) InnerText(selector string) (string, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionId,
 		"selector":  selector,
 	}
 
-	resp, err := hc.doRequest("POST", "/api/page/must-inner-text", body)
+	resp, err := hc.doRequest("POST", "/api/page/inner-text", body)
 	if err != nil {
 		return "", err
 	}
@@ -334,8 +334,8 @@ func (hc *HTTPClient) MustInnerText(selector string) (string, error) {
 	return "", fmt.Errorf("text not found in response")
 }
 
-// MustTextContent 必须获取文本内容
-func (hc *HTTPClient) MustTextContent(selector string) (string, error) {
+// TextContent 获取文本内容
+func (hc *HTTPClient) TextContent(selector string) (string, error) {
 	body := map[string]any{
 		"sessionId": hc.sessionId,
 		"selector":  selector,
