@@ -564,3 +564,50 @@ func (hc *HTTPClient) ElementCount(selector string) (int, error) {
 
 	return 0, fmt.Errorf("count not found in response")
 }
+
+// ========== 网络监听器 ==========
+
+// EnableNetworkListener 启用网络监听
+func (hc *HTTPClient) EnableNetworkListener(urlPatterns []string) error {
+	body := map[string]any{
+		"sessionId":   hc.sessionId,
+		"urlPatterns": urlPatterns,
+	}
+
+	_, err := hc.doRequest("POST", "/api/network/enable", body)
+	return err
+}
+
+// DisableNetworkListener 禁用网络监听
+func (hc *HTTPClient) DisableNetworkListener() error {
+	body := map[string]any{
+		"sessionId": hc.sessionId,
+	}
+
+	_, err := hc.doRequest("POST", "/api/network/disable", body)
+	return err
+}
+
+// GetNetworkStatus 获取网络监听器状态
+func (hc *HTTPClient) GetNetworkStatus() (map[string]any, error) {
+	resp, err := hc.doRequest("GET", "/api/network/status?sessionId="+hc.sessionId, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp.Data, nil
+}
+
+// ClearNetworkCache 清除网络缓存
+func (hc *HTTPClient) ClearNetworkCache(pattern string) error {
+	body := map[string]any{
+		"sessionId": hc.sessionId,
+	}
+
+	if pattern != "" {
+		body["pattern"] = pattern
+	}
+
+	_, err := hc.doRequest("POST", "/api/network/clear-cache", body)
+	return err
+}
