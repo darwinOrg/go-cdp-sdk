@@ -61,7 +61,7 @@ func main() {
 
 	// 6. 检查页面标题元素
 	fmt.Println("\n📌 步骤 6: 检查页面标题元素...")
-	locator := client.Locator("h1")
+	locator := page.Locator("h1")
 	exists, err := locator.Exists()
 	if err != nil {
 		log.Printf("❌ 检查元素失败: %v\n", err)
@@ -79,12 +79,12 @@ func main() {
 	}
 
 	for _, selector := range jobTitleSelectors {
-		locator := client.Locator(selector)
+		locator := page.Locator(selector)
 		exists, err := locator.Exists()
 		if err == nil && exists {
 			fmt.Printf("✅ 找到职位标题元素: %s\n", selector)
 			// 尝试获取文本
-			locator := client.Locator(selector)
+			locator := page.Locator(selector)
 			text, err := locator.Text()
 			if err == nil {
 				fmt.Printf("   职位标题: %s\n", text)
@@ -103,12 +103,12 @@ func main() {
 	}
 
 	for _, selector := range companySelectors {
-		locator := client.Locator(selector)
+		locator := page.Locator(selector)
 		exists, err := locator.Exists()
 		if err == nil && exists {
 			fmt.Printf("✅ 找到公司名称元素: %s\n", selector)
 			// 尝试获取文本
-			locator := client.Locator(selector)
+			locator := page.Locator(selector)
 			text, err := locator.Text()
 			if err == nil {
 				fmt.Printf("   公司名称: %s\n", text)
@@ -127,12 +127,12 @@ func main() {
 	}
 
 	for _, selector := range salarySelectors {
-		locator := client.Locator(selector)
+		locator := page.Locator(selector)
 		exists, err := locator.Exists()
 		if err == nil && exists {
 			fmt.Printf("✅ 找到薪资元素: %s\n", selector)
 			// 尝试获取文本
-			locator := client.Locator(selector)
+			locator := page.Locator(selector)
 			text, err := locator.Text()
 			if err == nil {
 				fmt.Printf("   薪资: %s\n", text)

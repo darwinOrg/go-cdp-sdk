@@ -11,15 +11,6 @@ type Locator struct {
 	selectors []string // 选择器链
 }
 
-// Locator 创建定位器
-func (hc *HTTPClient) Locator(selector string) *Locator {
-	return &Locator{
-		client:    hc,
-		selector:  selector,
-		selectors: []string{selector},
-	}
-}
-
 // Locator 嵌套定位器，支持多级定位
 func (l *Locator) Locator(selector string) *Locator {
 	newSelector := fmt.Sprintf("%s %s", l.selector, selector)

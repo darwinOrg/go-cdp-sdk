@@ -124,7 +124,11 @@ func (p *Page) Screenshot(format string) ([]byte, error) {
 
 // Locator 创建定位器
 func (p *Page) Locator(selector string) *Locator {
-	return p.client.Locator(selector)
+	return &Locator{
+		client:    p.client,
+		selector:  selector,
+		selectors: []string{selector},
+	}
 }
 
 // Exists 检查元素是否存在

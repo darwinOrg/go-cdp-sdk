@@ -52,7 +52,7 @@ func main() {
 
 	// 4. 使用 Locator
 	fmt.Println("\n4️⃣ 使用 Locator 操作元素...")
-	h1Locator := client.Locator("h1")
+	h1Locator := page.Locator("h1")
 	h1Text, err := h1Locator.Text()
 	if err != nil {
 		log.Printf("❌ 获取文本失败: %v\n", err)
@@ -62,7 +62,7 @@ func main() {
 
 	// 5. 多级 Locator
 	fmt.Println("\n5️⃣ 多级 Locator...")
-	linkLocator := client.Locator("div").Locator("p").Locator("a")
+	linkLocator := page.Locator("div").Locator("p").Locator("a")
 	exists, err := linkLocator.Exists()
 	if err != nil {
 		log.Printf("❌ 检查存在失败: %v\n", err)

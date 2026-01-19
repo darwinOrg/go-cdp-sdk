@@ -58,7 +58,7 @@ func main() {
 
 	// 检查元素是否存在
 	fmt.Println("\n📌 检查 h1 元素是否存在...")
-	locator := client.Locator("h1")
+	locator := page.Locator("h1")
 	exists, err := locator.Exists()
 	if err != nil {
 		log.Printf("❌ 检查元素失败: %v\n", err)

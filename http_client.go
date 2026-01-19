@@ -121,9 +121,7 @@ func (hc *HTTPClient) doRequestBinary(method, endpoint string, body any) ([]byte
 func (hc *HTTPClient) StartBrowser(headless bool) error {
 	body := map[string]any{
 		"sessionId": hc.sessionId,
-	}
-	if headless {
-		body["headless"] = "new"
+		"headless":  headless,
 	}
 
 	resp, err := hc.doRequest("POST", "/api/browser/start", body)
@@ -566,4 +564,3 @@ func (hc *HTTPClient) ElementCount(selector string) (int, error) {
 
 	return 0, fmt.Errorf("count not found in response")
 }
-

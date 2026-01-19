@@ -46,7 +46,7 @@ func main() {
 
 	// 检查搜索框是否存在
 	fmt.Println("\n📌 步骤 5: 检查搜索框是否存在...")
-	locator := client.Locator("#kw")
+	locator := page.Locator("#kw")
 	exists, err := locator.Exists()
 	if err != nil {
 		log.Printf("❌ 检查元素失败: %v\n", err)
@@ -58,7 +58,7 @@ func main() {
 
 	// 在搜索框中输入文本
 	fmt.Println("\n📌 步骤 6: 在搜索框中输入文本...")
-	if err := client.Locator("#kw").SetValue("TypeScript CDP 自动化"); err != nil {
+	if err := page.Locator("#kw").SetValue("TypeScript CDP 自动化"); err != nil {
 		log.Printf("❌ 输入文本失败: %v\n", err)
 	} else {
 		fmt.Println("✅ 输入成功")
@@ -66,7 +66,7 @@ func main() {
 
 	// 点击搜索按钮
 	fmt.Println("\n📌 步骤 7: 点击搜索按钮...")
-	if err := client.Locator("#su").Click(); err != nil {
+	if err := page.Locator("#su").Click(); err != nil {
 		log.Printf("❌ 点击失败: %v\n", err)
 	} else {
 		fmt.Println("✅ 点击成功")
@@ -78,7 +78,7 @@ func main() {
 
 	// 获取搜索结果数量
 	fmt.Println("\n📌 步骤 10: 获取搜索结果数量...")
-	locator = client.Locator(".result")
+	locator = page.Locator(".result")
 	var count int
 	count, err = locator.Count()
 	if err != nil {
@@ -89,7 +89,7 @@ func main() {
 
 	// 获取所有搜索结果的标题
 	fmt.Println("\n📌 步骤 11: 获取搜索结果标题...")
-	locator = client.Locator(".result h3 a")
+	locator = page.Locator(".result h3 a")
 	var texts []string
 	texts, err = locator.AllTexts()
 	if err != nil {
